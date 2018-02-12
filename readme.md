@@ -7,11 +7,11 @@ A library for converting HTML documents to PDF documents.
 
 ## How it works
 
-Uses Apache Exec and a synchronization-block to ensure a thread-safe, non-locking interaction between library and the command line
+Uses Apache Exec and a synchronization-block to ensure a thread-safe, non-locking interaction between this library and the command line
 tool [wkhtmltopdf](https://wkhtmltopdf.org/), which converts HTML documents to PDF documents.
 
-This library includes the binaries for Windows, Mac & Linux and will decide which to use based on the Operating System
-it is running on.  You can instead provide your own wkhtmltopdf binary by setting the `WKHTMLTOPDF_BINARY` environment variable.
+This library includes the binaries for Windows, Mac & Linux and will decide which to use based on the current operating system.  
+Optionally you can provide your own [wkhtmltopdf](https://wkhtmltopdf.org/) binary by setting the `WKHTMLTOPDF_BINARY` environment variable.
 
 <br/>
 
