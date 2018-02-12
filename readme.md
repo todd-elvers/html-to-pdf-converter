@@ -7,19 +7,26 @@ A library for converting HTML documents to PDF documents.
 
 ## How it works
 
-Uses Apache Exec and a synchronization-block to ensure a thread-safe, non-locking interaction between this library and the command line
-tool [wkhtmltopdf](https://wkhtmltopdf.org/), which converts HTML documents to PDF documents.
+This library uses [wkhtmltopdf](https://wkhtmltopdf.org/), Apache Exec, and synchronization for a robust, thread-safe HTML to PDF conversion process.
 
-This library includes the binaries for Windows, Mac & Linux and will decide which to use based on the current operating system.  
+It includes the binaries for Windows, Mac & Linux and will decide which to use based on the current operating system.  
 Optionally you can provide your own [wkhtmltopdf](https://wkhtmltopdf.org/) binary by setting the `WKHTMLTOPDF_BINARY` environment variable.
-
-<br/>
 
 #### Limitations
 
 This library aims at simplifying the usage of [wkhtmltopdf](https://wkhtmltopdf.org/) in Java, which means this library is limited to only
 what that tool can do and also shares any bugs that tool might contain.
 
+<br/>
+
+## Adding this to your project
+
+In your `build.gradle` file:
+* Under `repositories`
+    * Add `maven { url "https://jitpack.io" }`, making sure it's the _last_ repo declared
+* Under `dependencies`
+    * Add `compile 'com.github.todd-elvers:html-to-pdf-converter:1.0.1'`
+    
 <br/>
 
 ## Things to know
