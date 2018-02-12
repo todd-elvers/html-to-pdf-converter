@@ -19,8 +19,7 @@ class HtmlToPdfBinaryResolverTest extends Specification implements ResourceFindi
     void "always ensures the binary it is instantiated with has the executable flag"() {
         given: 'a webkitHtmlToPdf binary missing the executable flag'
             File wkHtmlToPdfBinary = getOsSpecificBinary()
-            wkHtmlToPdfBinary.setExecutable(false)
-            assert !Files.isExecutable(wkHtmlToPdfBinary.toPath())
+            assert wkHtmlToPdfBinary.setExecutable(false) : "Failed to set the file to NOT executable first."
 
         when: 'webkitHtmlToPdf binary bean is instantiated'
             def webkitHtmlToPdfExecutable = binaryResolver.resolve()
@@ -28,15 +27,6 @@ class HtmlToPdfBinaryResolverTest extends Specification implements ResourceFindi
         then: 'the executable flag is set'
             Files.isExecutable(webkitHtmlToPdfExecutable.toPath())
     }
-
-    void "throws RuntimeException if the wkhtmltopdf's executable flag cannot be set"() {
-        when:
-            binaryResolver.asExecutable(new File('not-going-to-find-this'))
-
-        then:
-            thrown(RuntimeException)
-    }
-
 
     void "will use binary from environment variable over binary from JAR"() {
         given:
