@@ -11,13 +11,12 @@ import spock.lang.Specification
 import java.nio.file.Files
 
 class HtmlToPdfBinaryResolverTest extends Specification implements ResourceFinding {
-
     HtmlToPdfBinaryResolver binaryResolver = []
 
     @Rule
     TemporaryFolder temporaryFolder = new TemporaryFolder()
 
-    @IgnoreIf({ isOsWindows() })
+    @IgnoreIf({ System.properties['os.name']?.toString()?.toLowerCase()?.contains("windows") })
     void "always ensures the binary it is instantiated with has the executable flag"() {
         given: 'a webkitHtmlToPdf binary missing the executable flag'
             File wkHtmlToPdfBinary = getOsSpecificBinary()
@@ -31,7 +30,7 @@ class HtmlToPdfBinaryResolverTest extends Specification implements ResourceFindi
             Files.isExecutable(webkitHtmlToPdfExecutable.toPath())
     }
 
-    @IgnoreIf({ isOsWindows() })
+    @IgnoreIf({ System.properties['os.name']?.toString()?.toLowerCase()?.contains("windows") })
     void "throws RuntimeException if the wkhtmltopdf's executable flag cannot be set"() {
         when:
             binaryResolver.asExecutable(new File('not-going-to-find-this'))
@@ -95,7 +94,5 @@ class HtmlToPdfBinaryResolverTest extends Specification implements ResourceFindi
         }
     }
 
-    private static boolean isOsWindows() {
-        return System.properties['os.name']?.toString()?.toLowerCase()?.contains("windows")
-    }
+
 }
