@@ -1,5 +1,6 @@
 package te.htmltopdf;
 
+import io.vavr.control.Try;
 import org.apache.commons.exec.PumpStreamHandler;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -8,8 +9,6 @@ import org.slf4j.LoggerFactory;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
-
-import io.vavr.control.Try;
 
 import static java.nio.charset.Charset.defaultCharset;
 

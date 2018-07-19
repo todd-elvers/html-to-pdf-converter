@@ -1,21 +1,14 @@
 package te.htmltopdf;
 
-import te.htmltopdf.domain.exceptions.HtmlToPdfConversionException;
-import te.htmltopdf.domain.PdfFile;
-
+import io.vavr.control.Try;
 import net.jcip.annotations.GuardedBy;
 import net.jcip.annotations.ThreadSafe;
-
-import org.apache.commons.exec.CommandLine;
-import org.apache.commons.exec.DefaultExecutor;
-import org.apache.commons.exec.ExecuteWatchdog;
-import org.apache.commons.exec.Executor;
-import org.apache.commons.exec.PumpStreamHandler;
+import org.apache.commons.exec.*;
+import te.htmltopdf.domain.PdfFile;
+import te.htmltopdf.domain.exceptions.HtmlToPdfConversionException;
 
 import java.io.File;
 import java.io.IOException;
-
-import io.vavr.control.Try;
 
 /**
  * Converts HTML documents to PDF documents.
