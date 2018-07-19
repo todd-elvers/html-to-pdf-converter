@@ -35,6 +35,7 @@ In your `build.gradle` file:
   * `tryToConvert(html)` which writes the generated PDF to a file in the temporary directory so you can then write it wherever you'd like
   * `tryToConvert(html, outputFile)` which writes the generated PDF to the specified output file
 * When `HtmlToPdfFileConverter` is instantiated for the first time using the no-arg constructor a wkhtmltopdf binary will be extracted from the JAR to a temporary folder
+  * To disable this behavior and use your own `wkhtmltopdf` binary simply create the environment variable `WKHTMLTOPDF_BINARY` and point it to your binary 
 * The `PdfFile` class that is returned from `HtmlToPdfFileConverter` has a `close()` method which will delete the file from disk
 * When the HTML -> PDF conversion process fails, the exception `HtmlToPdfConversionException` is thrown which will contain the output
 text from the command line for easier troubleshooting.
