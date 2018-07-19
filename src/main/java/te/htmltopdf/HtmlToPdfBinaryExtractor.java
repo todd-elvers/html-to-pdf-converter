@@ -1,17 +1,15 @@
 package te.htmltopdf;
 
-import te.htmltopdf.domain.exceptions.BinaryExtractionException;
-
+import io.vavr.control.Try;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import te.htmltopdf.domain.exceptions.BinaryExtractionException;
 
 import java.io.File;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-
-import io.vavr.control.Try;
 
 import static org.apache.commons.lang3.SystemUtils.IS_OS_MAC;
 import static org.apache.commons.lang3.SystemUtils.IS_OS_WINDOWS;
