@@ -26,3 +26,5 @@ dependencies {
     testCompile 'org.objenesis:objenesis:2.6'
     testCompile 'org.spockframework:spock-core:1.1-groovy-2.4'
 }
+
+apply from: 'attach-sources.gradle'
