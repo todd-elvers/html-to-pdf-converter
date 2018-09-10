@@ -7,7 +7,7 @@ A library for converting HTML documents to PDF documents.
 
 ## How it works
 
-This library uses [wkhtmltopdf](https://wkhtmltopdf.org/), Apache Exec, and synchronization for a robust, thread-safe HTML to PDF conversion process.
+This library uses a binary of [wkhtmltopdf](https://wkhtmltopdf.org/), Apache Exec, and synchronization for a robust, thread-safe HTML to PDF conversion process.
 
 It includes the binaries for Windows, Mac & Linux and will decide which to use based on the current operating system.  
 Optionally you can provide your own [wkhtmltopdf](https://wkhtmltopdf.org/) binary by setting the `WKHTMLTOPDF_BINARY` environment variable.
@@ -16,6 +16,8 @@ Optionally you can provide your own [wkhtmltopdf](https://wkhtmltopdf.org/) bina
 
 This library aims at simplifying the usage of [wkhtmltopdf](https://wkhtmltopdf.org/) in Java, which means this library is limited to only
 what that tool can do and also shares any bugs that tool might contain.
+
+This library is written and compiled with Java 8.  Compile from source if you need to target a lower Java version.
 
 <br/>
 
@@ -42,7 +44,7 @@ text from the command line for easier troubleshooting.
 
 <br/>
 
-## Usage Examples:
+## Examples:
 
 In the following example we write the resulting PDF to a temporary directory, then write it to some stream, and then the try-with-resources block
 cleans up the PDF from disk:
