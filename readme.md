@@ -31,19 +31,6 @@ In your `build.gradle` file:
     
 <br/>
 
-## Things to know
-
-* The `HtmlToPdfFileConverter` class does the converting and has two methods of interest:
-  * `tryToConvert(html)` which writes the generated PDF to a file in the temporary directory so you can then write it wherever you'd like
-  * `tryToConvert(html, outputFile)` which writes the generated PDF to the specified output file
-* When `HtmlToPdfFileConverter` is instantiated for the first time using the no-arg constructor a wkhtmltopdf binary will be extracted from the JAR to a temporary folder
-  * To disable this behavior and use your own `wkhtmltopdf` binary simply create the environment variable `WKHTMLTOPDF_BINARY` and point it to your binary 
-* The `PdfFile` class that is returned from `HtmlToPdfFileConverter` has a `close()` method which will delete the file from disk
-* When the HTML -> PDF conversion process fails, the exception `HtmlToPdfConversionException` is thrown which will contain the output
-text from the command line for easier troubleshooting.
-
-<br/>
-
 ## Examples:
 
 In the following example we write the resulting PDF to a temporary directory, then write it to some stream, and then the try-with-resources block
@@ -71,3 +58,18 @@ try {
     ...
 }
 ```
+
+<br/>
+
+## Things to know
+
+#### PDF Generation
+
+* `HtmlToPdfFileConverter`
+    * Instantiating this class causes a wkhtmltopdf binary to be extracted from the JAR to the system's temp. directory.
+        * To disable this behavior and use your own `wkhtmltopdf` binary simply create the environment variable `WKHTMLTOPDF_BINARY` and point it to your binary 
+    * `tryToConvert(html)` should be used if the PDF being generated has a short-lived purpose (e.g. delivering dynamic PDFs from a webservice)
+        * Generates a PDF file and writes it to the system's temp. directory which can then be streamed to a destination
+    * `tryToConvert(html, outputFile)` should be used for all other PDF generation
+        * Generates a PDF file and writes it to `outputFile`
+    * If either of the two methods above fail, a `HtmlToPdfConversionException` is thrown which will contain the output text from the command line for easier troubleshooting. 
