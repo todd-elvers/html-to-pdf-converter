@@ -17,8 +17,9 @@ import java.nio.file.Files;
  */
 public class HtmlToPdfBinaryResolver {
     private static final Logger log = LoggerFactory.getLogger(HtmlToPdfBinaryResolver.class);
-    private static final String BINARY_SYSTEM_VARIABLE = "WKHTMLTOPDF_BINARY";
-    protected HtmlToPdfBinaryExtractor htmlToPdfBinaryExtractor;
+    public static final String BINARY_ENV_VAR_NAME = "WKHTMLTOPDF_BINARY";
+
+    protected final HtmlToPdfBinaryExtractor htmlToPdfBinaryExtractor;
 
     public HtmlToPdfBinaryResolver() {
         this.htmlToPdfBinaryExtractor = new HtmlToPdfBinaryExtractor();
@@ -34,11 +35,12 @@ public class HtmlToPdfBinaryResolver {
     protected File resolveBinaryFile() {
         if (isEnvironmentVariableSet()) {
             File binary = resolveBinaryFromEnvironmentVariable();
+
             if (binary.exists()) {
-                log.info("Using binary from environment variable @ {}.", binary.getAbsolutePath());
+                log.info("Using binary from environment variable @ {}", binary.getAbsolutePath());
                 return binary;
             } else {
-                log.error("Binary specified in environment variable could not be found.", binary.getAbsolutePath());
+                log.error("Binary specified in environment variable could not be found @ {}", binary.getAbsolutePath());
             }
         }
 
@@ -46,20 +48,20 @@ public class HtmlToPdfBinaryResolver {
     }
 
     protected File resolveBinaryFromEnvironmentVariable() {
-        return new File(System.getenv(BINARY_SYSTEM_VARIABLE));
+        return new File(System.getenv(BINARY_ENV_VAR_NAME));
     }
 
     protected boolean isEnvironmentVariableSet() {
-        log.debug("{} system variable is set to {}.", BINARY_SYSTEM_VARIABLE, System.getenv(BINARY_SYSTEM_VARIABLE));
+        log.debug("{} system variable is set to {}", BINARY_ENV_VAR_NAME, System.getenv(BINARY_ENV_VAR_NAME));
         return StringUtils.isNotEmpty(
-                System.getenv(BINARY_SYSTEM_VARIABLE)
+                System.getenv(BINARY_ENV_VAR_NAME)
         );
     }
 
     protected File asExecutable(File binary) {
         if (!Files.isExecutable(binary.toPath())) {
             if (!binary.setExecutable(true)) {
-                throw new RuntimeException("Failed to make '" + binary.getName() + "' executable.");
+                throw new RuntimeException("Failed to make '" + binary.getName() + "' executable");
             }
         }
 
