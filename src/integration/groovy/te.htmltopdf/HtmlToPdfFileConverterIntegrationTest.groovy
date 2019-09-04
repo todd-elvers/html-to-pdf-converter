@@ -1,4 +1,4 @@
-package te.htmltopdf.pdf
+package te.htmltopdf
 
 import te.htmltopdf.HtmlToPdfFileConverter
 import te.htmltopdf.testHelpers.ResourceFinding
@@ -9,12 +9,12 @@ import spock.lang.Specification
 
 class HtmlToPdfFileConverterIntegrationTest extends Specification implements ResourceFinding {
 
-    HtmlToPdfFileConverter htmlToPdfFileConverter = []
+    HtmlToPdfFileConverter htmlToPdfFileConverter = new HtmlToPdfFileConverter()
 
     @Rule
     TemporaryFolder temporaryFolder = new TemporaryFolder()
 
-    void "can generate a PDF from a VHR containing HBV"() {
+    void "can generate a PDF from HTML with no relative links"() {
         given:
             String html = findResourceFile("example.htm").getText()
             File outputFile = temporaryFolder.newFile("example.pdf")

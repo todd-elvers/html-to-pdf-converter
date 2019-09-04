@@ -23,6 +23,8 @@ public class HtmlToPdfFileConverter {
     private static final String EXPECT_FILE_AS_STREAM_FROM_STD_IN = "-";
     private static final Object LOCK = new Object[0];
 
+    //TODO: Check response code from wkhtmltopdf and output error message from console
+
     @GuardedBy("HtmlToPdfFileConverter.LOCK")
     protected final File wkHtmlToPdfBinary;
 
