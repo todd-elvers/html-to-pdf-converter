@@ -1,0 +1,47 @@
+/*** Adds :dependencyUpdates that prints latest release versions of all dependencies ***/
+
+
+/*
+ * The plugin that contains :dependencyUpdates is the 'Versions' Gradle plugin,
+ * which is applied here and modified to only consider full, release versions.
+ * 
+ * Modification:
+ * -------------
+ *      Consider the following scenario:
+ *          Your project -> version 3.0 of dependency X
+ *          Maven repo   -> version 3.5 and 4.0-RC1 of dependency X
+ * 
+ *      Original task output: 4.0-RC1
+ *      Modified task output: 3.5
+ * 
+ *      To revert to original task behavior simply include the following flag: -Pall
+ */
+
+
+// Required syntax for applying a non-standard plugin from outside of build.gradle
+buildscript {
+    repositories.jcenter()
+    dependencies.classpath "com.github.ben-manes:gradle-versions-plugin:0.21.0"
+}
+apply plugin: com.github.benmanes.gradle.versions.VersionsPlugin
+
+
+def nonReleaseQualifiers = ['alpha', 'beta', 'rc', 'cr', 'm', 'preview', 'b', 'ea']
+def flagToIncludeNonReleaseVersions = 'all'
+
+// Configure the :dependencyUpdates task to only output release versions
+dependencyUpdates.resolutionStrategy {
+    componentSelection { rules ->
+        rules.all { ComponentSelection selection ->
+            if(!project.hasProperty(flagToIncludeNonReleaseVersions)) {
+                boolean isNonReleaseVersion = nonReleaseQualifiers.any { qualifier ->
+                    selection.candidate.version ==~ /(?i).*[.-]$qualifier[.\d-+]*.*/
+                }
+
+                if (isNonReleaseVersion) {
+                    selection.reject('Release candidate')
+                }
+            }
+        }
+    }
+}
