@@ -1,6 +1,10 @@
 apply plugin: 'java'
 apply plugin: 'groovy'
 
+apply from: 'add-integration-tests.gradle'
+apply from: 'add-versions-plugin.gradle'
+apply from: 'add-source-artifacts.gradle'
+
 repositories {
     mavenCentral()
 }
@@ -26,5 +30,3 @@ dependencies {
     testCompile 'org.objenesis:objenesis:2.6'
     testCompile 'org.spockframework:spock-core:1.1-groovy-2.4'
 }
-
-apply from: 'attach-sources.gradle'

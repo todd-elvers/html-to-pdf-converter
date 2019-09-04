@@ -1,0 +1,28 @@
+/*** Ensures sources & JavaDoc artifacts are built and attached when publishing. ***/
+
+
+apply plugin: 'maven'
+
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    group = 'documentation'
+    description = 'Generates a JAR of sources'
+    classifier = 'sources'
+
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    group = 'documentation'
+    description = 'Generates a JAR of javadocs'
+    classifier = 'javadoc'
+
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives sourcesJar
+    archives javadocJar
+}

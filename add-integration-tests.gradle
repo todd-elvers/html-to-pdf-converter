@@ -1,0 +1,54 @@
+/*** Configures Gradle & Intellij for integration testing out of /src/integration/groovy. ***/
+
+
+// Configure the `integration` classpath
+sourceSets {
+    integration {
+        compileClasspath += main.output + test.output
+        runtimeClasspath += main.runtimeClasspath + test.runtimeClasspath
+    }
+}
+
+// Configure the libraries available to `integration`  
+configurations {
+    integrationImplementation.extendsFrom testImplementation
+    integrationRuntime.extendsFrom testRuntime
+}
+
+// Add a task for running all tests in `integration`
+tasks.register("integrationTest", Test) {
+    description = 'Runs the integration tests.'
+    group = 'verification'
+
+    testClassesDirs = sourceSets.integration.output.classesDirs
+    classpath = sourceSets.integration.runtimeClasspath
+    
+    // Always re-run integration tests when asked, never use previous, cached results
+    outputs.upToDateWhen { false }
+
+    // This means "when :test and :integrationTest are both scheduled to run, :test must run before :integrationTest"
+    mustRunAfter test
+}
+
+// Ensure :integrationTest is run when :check is run 
+check.dependsOn integrationTest
+
+
+/**
+ * Link to `idea` plugin documentation and all available properties/settings:
+ * https://docs.gradle.org/current/dsl/org.gradle.plugins.ide.idea.model.IdeaModule.html
+ */
+apply plugin: 'idea'
+idea {
+    //noinspection GroovyAssignabilityCheck
+    module {
+        // Sync up Gradle's `integration` source set with Intellij
+        testSourceDirs += sourceSets.integration.groovy.srcDirs
+        testResourceDirs += sourceSets.integration.resources.srcDirs
+        scopes.TEST.plus += [ configurations.integrationCompile ]
+
+        // Proactively download sources & javadocs
+        downloadJavadoc = true
+        downloadSources = true
+    }
+}
