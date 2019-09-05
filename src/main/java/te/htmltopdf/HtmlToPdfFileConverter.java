@@ -1,14 +1,20 @@
 package te.htmltopdf;
 
-import io.vavr.control.Try;
 import net.jcip.annotations.GuardedBy;
 import net.jcip.annotations.ThreadSafe;
-import org.apache.commons.exec.*;
-import te.htmltopdf.domain.PdfFile;
-import te.htmltopdf.domain.exceptions.HtmlToPdfConversionException;
+
+import org.apache.commons.exec.CommandLine;
+import org.apache.commons.exec.DefaultExecutor;
+import org.apache.commons.exec.ExecuteWatchdog;
+import org.apache.commons.exec.Executor;
+import org.apache.commons.exec.PumpStreamHandler;
 
 import java.io.File;
 import java.io.IOException;
+
+import io.vavr.control.Try;
+import te.htmltopdf.domain.PdfFile;
+import te.htmltopdf.domain.exceptions.HtmlToPdfConversionException;
 
 /**
  * Converts HTML documents to PDF documents.
@@ -19,11 +25,14 @@ import java.io.IOException;
  * @see <a href="https://wkhtmltopdf.org/">wkhtmltopdf site</href>
  */
 @ThreadSafe
+@SuppressWarnings("WeakerAccess")
 public class HtmlToPdfFileConverter {
     private static final String EXPECT_FILE_AS_STREAM_FROM_STD_IN = "-";
     private static final Object LOCK = new Object[0];
 
     //TODO: Check response code from wkhtmltopdf and output error message from console
+    //TODO: Add means to arbitrarily modify the command sent to wkhtmltopdf
+    //TODO: Add support for Chrome PDF generation via puppeteer
 
     @GuardedBy("HtmlToPdfFileConverter.LOCK")
     protected final File wkHtmlToPdfBinary;
@@ -82,10 +91,10 @@ public class HtmlToPdfFileConverter {
      */
     public PdfFile tryToConvert(String html, File outputFile) throws HtmlToPdfConversionException {
         synchronized (LOCK) {
-            CommandLine conversionCommand = createConversionCommand(outputFile);
+            CommandLine command = createConversionCommand(outputFile);
 
             return tryToExecuteCommand(
-                    conversionCommand,
+                    command,
                     html,
                     outputFile
             );
