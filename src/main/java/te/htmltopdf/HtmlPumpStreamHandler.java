@@ -1,6 +1,5 @@
 package te.htmltopdf;
 
-import io.vavr.control.Try;
 import org.apache.commons.exec.PumpStreamHandler;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -9,6 +8,8 @@ import org.slf4j.LoggerFactory;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
+
+import io.vavr.control.Try;
 
 import static java.nio.charset.Charset.defaultCharset;
 
@@ -23,7 +24,7 @@ public class HtmlPumpStreamHandler extends PumpStreamHandler implements Closeabl
 
     /**
      * Creates a HtmlStreamHandler capable of streaming HTML in from memory so that it can be piped to the wkhtmltopdf binary
-     * without the need to write it to the disk first.
+     * without the need to write it to disk first.
      */
     public HtmlPumpStreamHandler(String html) {
         this(
@@ -33,8 +34,8 @@ public class HtmlPumpStreamHandler extends PumpStreamHandler implements Closeabl
     }
 
     /**
-     * Creates a HtmlStreamHandler capable of streaming HTML in from memory so that it can be piped to a binary without the need
-     * to write it to the disk first.
+     * Creates a HtmlStreamHandler capable of streaming HTML in from memory so that it can be piped to the wkhtmltopdf binary
+     * without the need to write it to disk first.
      */
     public HtmlPumpStreamHandler(ByteArrayInputStream streamOfHtmlInFromMemory, ByteArrayOutputStream streamOfOutputTextFromBinary) {
         // Even though the method signature is `super(stdout, stderr, stdin)`, after some extensive testing I found these are misnamed.
