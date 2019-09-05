@@ -12,7 +12,7 @@ class HtmlToPdfBinaryExtractorTest extends Specification {
     void "throws TempFileCreationException if we fail to create a temp file"() {
         given:
             def binaryExtractor = new HtmlToPdfBinaryExtractor() {
-                protected Tuple3<String, File, InputStream> createNewTempFile(Tuple3<String, File, InputStream> extraction) {
+                protected Tuple3<String, File, InputStream> createEmptyTempFile(Tuple3<String, File, InputStream> extraction) {
                     throw new TempFileCreationException()
                 }
             }
@@ -44,7 +44,7 @@ class HtmlToPdfBinaryExtractorTest extends Specification {
         given:
             def binaryExtractor = new HtmlToPdfBinaryExtractor() {
                 @Override
-                protected Tuple3<String, File, InputStream> createNewTempFile(Tuple3<String, File, InputStream> extraction) {
+                protected Tuple3<String, File, InputStream> createEmptyTempFile(Tuple3<String, File, InputStream> extraction) {
                     return extraction
                 }
             }

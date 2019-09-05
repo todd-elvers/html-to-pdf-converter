@@ -10,12 +10,17 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import io.vavr.Function0;
+import io.vavr.Tuple;
 import io.vavr.Tuple3;
+import io.vavr.control.Option;
 import io.vavr.control.Try;
 import te.htmltopdf.domain.exceptions.BinaryClassLoaderException;
 import te.htmltopdf.domain.exceptions.BinaryExtractionException;
 import te.htmltopdf.domain.exceptions.TempFileCreationException;
 
+import static io.vavr.API.$;
+import static io.vavr.API.Case;
+import static io.vavr.API.Match;
 import static org.apache.commons.io.FilenameUtils.getExtension;
 import static org.apache.commons.io.FilenameUtils.removeExtension;
 import static org.apache.commons.lang3.SystemUtils.IS_OS_MAC;
@@ -27,42 +32,54 @@ import static org.apache.commons.lang3.SystemUtils.IS_OS_WINDOWS;
 public class HtmlToPdfBinaryExtractor {
     private static final Logger log = LoggerFactory.getLogger(HtmlToPdfBinaryExtractor.class);
 
+    /**
+     * Extracts the OS-specific wkhtmltopdf binary from our JAR and streams it to a temporary file.
+     *
+     * @return a reference to the OS-specific wkhtmltopdf binary on disk
+     */
     public File extract() {
         log.info("Extracting wkhtmltopdf binary for this OS.");
 
         return Function0
                 .of(this::prepareForBinaryFileExtraction)
-                .andThen(this::createNewTempFile)
+                .andThen(this::createEmptyTempFile)
                 .andThen(this::openStreamOfBinaryContents)
                 .andThen(this::writeBinaryContentsToTempFile)
                 .apply();
     }
 
     protected Tuple3<String, File, InputStream> prepareForBinaryFileExtraction() {
-        return new Tuple3<>(determineBinaryFilename(), null, null);
-    }
-
-    protected Tuple3<String, File, InputStream> openStreamOfBinaryContents(Tuple3<String, File, InputStream> extraction) {
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        if (classLoader == null) throw new BinaryClassLoaderException();
-
-        InputStream executableFileStream = classLoader.getResourceAsStream(extraction._1);
-        if (executableFileStream == null) throw new BinaryClassLoaderException();
-
-        return extraction.update3(executableFileStream);
+        return Tuple.of(determineBinaryFilename(), null, null);
     }
 
     protected String determineBinaryFilename() {
-        if (IS_OS_MAC) return "wkhtmltopdf_mac";
-        if (IS_OS_WINDOWS) return "wkhtmltopdf_win.exe";
-        return "wkhtmltopdf_linux";
+        return Match(true).of(
+                Case($(IS_OS_WINDOWS), "wkhtmltopdf_win.exe"),
+                Case($(IS_OS_MAC), "wkhtmltopdf_mac"),
+                Case($(), "wkhtmltopdf_linux")
+        );
     }
 
-    protected Tuple3<String, File, InputStream> createNewTempFile(Tuple3<String, File, InputStream> extraction) {
+    protected Tuple3<String, File, InputStream> createEmptyTempFile(Tuple3<String, File, InputStream> extraction) {
         return extraction.update2(
                 Try.of(() -> Files.createTempFile(removeExtension(extraction._1), getExtension(extraction._1)))
                         .mapTry(Path::toFile)
                         .getOrElseThrow(TempFileCreationException::new)
+        );
+    }
+
+    /**
+     * Opens a stream to one of the binaries packaged in the library so it can be streamed to disk.
+     *
+     * @throws BinaryClassLoaderException when the Thread's context classloader is null or when
+     *                                    fetching the resource as a stream returns null
+     */
+    protected Tuple3<String, File, InputStream> openStreamOfBinaryContents(Tuple3<String, File, InputStream> extraction) {
+        return extraction.update3(
+                Option
+                        .of(Thread.currentThread().getContextClassLoader())
+                        .flatMap(classloader -> Option.of(classloader.getResourceAsStream(extraction._1)))
+                        .getOrElseThrow(BinaryClassLoaderException::new)
         );
     }
 
