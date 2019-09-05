@@ -1,12 +1,12 @@
 package te.htmltopdf.pdf
 
-import spock.lang.IgnoreIf
-import te.htmltopdf.HtmlToPdfBinaryResolver
-import te.htmltopdf.testHelpers.ResourceFinding
 import org.apache.commons.lang3.SystemUtils
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
+import spock.lang.IgnoreIf
 import spock.lang.Specification
+import te.htmltopdf.HtmlToPdfBinaryResolver
+import te.htmltopdf.testHelpers.ResourceFinding
 
 import java.nio.file.Files
 
@@ -17,7 +17,7 @@ class HtmlToPdfBinaryResolverTest extends Specification implements ResourceFindi
     TemporaryFolder temporaryFolder = new TemporaryFolder()
 
     @IgnoreIf({ System.properties['os.name']?.toString()?.toLowerCase()?.contains("windows") })
-    void "always ensures the binary it is instantiated with has the executable flag"() {
+    void "always ensures the binary is instantiated with the executable flag"() {
         given: 'a webkitHtmlToPdf binary missing the executable flag'
             File wkHtmlToPdfBinary = getOsSpecificBinary()
             wkHtmlToPdfBinary.setExecutable(false)
