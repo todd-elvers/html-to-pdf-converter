@@ -9,6 +9,8 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import io.vavr.Function0;
+import io.vavr.Tuple3;
 import io.vavr.control.Try;
 import te.htmltopdf.domain.exceptions.BinaryClassLoaderException;
 import te.htmltopdf.domain.exceptions.BinaryExtractionException;
@@ -27,7 +29,27 @@ public class HtmlToPdfBinaryExtractor {
 
     public File extract() {
         log.info("Extracting wkhtmltopdf binary for this OS.");
-        return writeBinaryToTempDir(determineBinaryFilename());
+
+        return Function0
+                .of(this::prepareForBinaryFileExtraction)
+                .andThen(this::createNewTempFile)
+                .andThen(this::openStreamOfBinaryContents)
+                .andThen(this::writeBinaryContentsToTempFile)
+                .apply();
+    }
+
+    protected Tuple3<String, File, InputStream> prepareForBinaryFileExtraction() {
+        return new Tuple3<>(determineBinaryFilename(), null, null);
+    }
+
+    protected Tuple3<String, File, InputStream> openStreamOfBinaryContents(Tuple3<String, File, InputStream> extraction) {
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        if (classLoader == null) throw new BinaryClassLoaderException();
+
+        InputStream executableFileStream = classLoader.getResourceAsStream(extraction._1);
+        if (executableFileStream == null) throw new BinaryClassLoaderException();
+
+        return extraction.update3(executableFileStream);
     }
 
     protected String determineBinaryFilename() {
@@ -36,30 +58,18 @@ public class HtmlToPdfBinaryExtractor {
         return "wkhtmltopdf_linux";
     }
 
-    protected File writeBinaryToTempDir(String filename) {
-        File executableFile = createNewTempFile(filename);
-        InputStream executableContentsInJAR = getStreamToExecutableInJAR(filename);
+    protected Tuple3<String, File, InputStream> createNewTempFile(Tuple3<String, File, InputStream> extraction) {
+        return extraction.update2(
+                Try.of(() -> Files.createTempFile(removeExtension(extraction._1), getExtension(extraction._1)))
+                        .mapTry(Path::toFile)
+                        .getOrElseThrow(TempFileCreationException::new)
+        );
+    }
 
-        Try.run(() -> FileUtils
-                .copyInputStreamToFile(executableContentsInJAR, executableFile))
+    protected File writeBinaryContentsToTempFile(Tuple3<String, File, InputStream> extraction) {
+        Try.run(() -> FileUtils.copyInputStreamToFile(extraction._3, extraction._2))
                 .getOrElseThrow(BinaryExtractionException::new);
 
-        return executableFile;
-    }
-
-    protected InputStream getStreamToExecutableInJAR(String filename) {
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        if (classLoader == null) throw new BinaryClassLoaderException();
-
-        InputStream executableFileStream = classLoader.getResourceAsStream(filename);
-        if (executableFileStream == null) throw new BinaryClassLoaderException();
-
-        return executableFileStream;
-    }
-
-    protected File createNewTempFile(String filename) {
-        return Try.of(() -> Files.createTempFile(removeExtension(filename), getExtension(filename)))
-                .mapTry(Path::toFile)
-                .getOrElseThrow(TempFileCreationException::new);
+        return extraction._2;
     }
 }
