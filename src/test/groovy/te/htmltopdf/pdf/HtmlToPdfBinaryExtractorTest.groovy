@@ -1,10 +1,10 @@
 package te.htmltopdf.pdf
 
+import io.vavr.Tuple3
+import spock.lang.Specification
 import te.htmltopdf.HtmlToPdfBinaryExtractor
 import te.htmltopdf.domain.exceptions.BinaryClassLoaderException
 import te.htmltopdf.domain.exceptions.BinaryExtractionException
-
-import spock.lang.Specification
 import te.htmltopdf.domain.exceptions.TempFileCreationException
 
 class HtmlToPdfBinaryExtractorTest extends Specification {
@@ -12,7 +12,7 @@ class HtmlToPdfBinaryExtractorTest extends Specification {
     void "throws TempFileCreationException if we fail to create a temp file"() {
         given:
             def binaryExtractor = new HtmlToPdfBinaryExtractor() {
-                protected File createNewTempFile(String filename) {
+                protected Tuple3<String, File, InputStream> createNewTempFile(Tuple3<String, File, InputStream> extraction) {
                     throw new TempFileCreationException()
                 }
             }
@@ -44,8 +44,8 @@ class HtmlToPdfBinaryExtractorTest extends Specification {
         given:
             def binaryExtractor = new HtmlToPdfBinaryExtractor() {
                 @Override
-                protected File createNewTempFile(String filename) {
-                    return null
+                protected Tuple3<String, File, InputStream> createNewTempFile(Tuple3<String, File, InputStream> extraction) {
+                    return extraction
                 }
             }
 
