@@ -1,15 +1,16 @@
 package te.htmltopdf
 
-import te.htmltopdf.HtmlToPdfFileConverter
-import te.htmltopdf.testHelpers.ResourceFinding
 import org.apache.commons.io.FileUtils
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import spock.lang.Specification
+import spock.lang.Subject
+import te.htmltopdf.testHelpers.ResourceFinding
 
 class HtmlToPdfFileConverterIntegrationTest extends Specification implements ResourceFinding {
 
-    HtmlToPdfFileConverter htmlToPdfFileConverter = new HtmlToPdfFileConverter()
+    @Subject
+    HtmlToPdfFileConverter htmlToPdfFileConverter = []
 
     @Rule
     TemporaryFolder temporaryFolder = new TemporaryFolder()
@@ -24,7 +25,7 @@ class HtmlToPdfFileConverterIntegrationTest extends Specification implements Res
 
         then: 'the PDF is generated and is not empty (should be greater than 100KB)'
             outputFile.exists()
-            outputFile.length() > FileUtils.ONE_KB
+            outputFile.length() > (FileUtils.ONE_KB * 100)
 
         and:
             noExceptionThrown()
