@@ -6,8 +6,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
 import io.vavr.Function0;
 import io.vavr.Tuple;
@@ -16,7 +14,6 @@ import io.vavr.control.Option;
 import io.vavr.control.Try;
 import te.htmltopdf.domain.exceptions.BinaryClassLoaderException;
 import te.htmltopdf.domain.exceptions.BinaryExtractionException;
-import te.htmltopdf.domain.exceptions.TempFileCreationException;
 
 import static org.apache.commons.io.FilenameUtils.getExtension;
 import static org.apache.commons.io.FilenameUtils.removeExtension;
@@ -30,6 +27,16 @@ import static org.apache.commons.lang3.SystemUtils.IS_OS_WINDOWS;
 public class HtmlToPdfBinaryExtractor {
     private static final Logger log = LoggerFactory.getLogger(HtmlToPdfBinaryExtractor.class);
 
+    protected final TempFileGenerator tempFileGenerator;
+
+    public HtmlToPdfBinaryExtractor() {
+        this(new TempFileGenerator());
+    }
+
+    public HtmlToPdfBinaryExtractor(TempFileGenerator tempFileGenerator) {
+        this.tempFileGenerator = tempFileGenerator;
+    }
+
     /**
      * Extracts the OS-specific wkhtmltopdf binary from our JAR and streams it to a temporary file.
      *
@@ -38,15 +45,14 @@ public class HtmlToPdfBinaryExtractor {
     public File extract() {
         log.info("Extracting wkhtmltopdf binary for this OS.");
 
-        return Function0
-                .of(this::prepareForBinaryFileExtraction)
+        return Function0.of(this::prepareForExtraction)
                 .andThen(this::createEmptyTempFile)
-                .andThen(this::openStreamOfBinaryContents)
-                .andThen(this::writeBinaryContentsToTempFile)
+                .andThen(this::openStreamToBinaryInJAR)
+                .andThen(this::streamBinaryContentsToTempFile)
                 .apply();
     }
 
-    protected Tuple3<String, File, InputStream> prepareForBinaryFileExtraction() {
+    protected Tuple3<String, File, InputStream> prepareForExtraction() {
         return Tuple.of(determineBinaryFilename(), null, null);
     }
 
@@ -58,9 +64,7 @@ public class HtmlToPdfBinaryExtractor {
 
     protected Tuple3<String, File, InputStream> createEmptyTempFile(Tuple3<String, File, InputStream> extraction) {
         return extraction.update2(
-                Try.of(() -> Files.createTempFile(removeExtension(extraction._1), getExtension(extraction._1)))
-                        .mapTry(Path::toFile)
-                        .getOrElseThrow(TempFileCreationException::new)
+                tempFileGenerator.generateTempBinaryFile(removeExtension(extraction._1), getExtension(extraction._1))
         );
     }
 
@@ -70,7 +74,7 @@ public class HtmlToPdfBinaryExtractor {
      * @throws BinaryClassLoaderException when the Thread's context classloader is null or when
      *                                    fetching the resource as a stream returns null
      */
-    protected Tuple3<String, File, InputStream> openStreamOfBinaryContents(Tuple3<String, File, InputStream> extraction) {
+    protected Tuple3<String, File, InputStream> openStreamToBinaryInJAR(Tuple3<String, File, InputStream> extraction) {
         return extraction.update3(
                 Option
                         .of(Thread.currentThread().getContextClassLoader())
@@ -79,7 +83,7 @@ public class HtmlToPdfBinaryExtractor {
         );
     }
 
-    protected File writeBinaryContentsToTempFile(Tuple3<String, File, InputStream> extraction) {
+    protected File streamBinaryContentsToTempFile(Tuple3<String, File, InputStream> extraction) {
         Try.run(() -> FileUtils.copyInputStreamToFile(extraction._3, extraction._2))
                 .getOrElseThrow(BinaryExtractionException::new);
 
