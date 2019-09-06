@@ -11,6 +11,7 @@ import org.apache.commons.exec.PumpStreamHandler;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.function.Function;
 
 import io.vavr.control.Try;
 import te.htmltopdf.domain.PdfFile;
@@ -19,15 +20,16 @@ import te.htmltopdf.domain.exceptions.HtmlToPdfConversionException;
 /**
  * Converts HTML documents to PDF documents.
  *
- * <p>Under the hood this uses Apache Exec and a synchronization-block to ensure a thread-safe, non-locking
- * interaction between this class and the command line.
+ * <p>Under the hood this uses Apache Exec and a synchronization-block to ensure a thread-safe,
+ * non-locking interaction between this class and the command line.
  *
  * @see <a href="https://wkhtmltopdf.org/">wkhtmltopdf site</href>
  */
 @ThreadSafe
 @SuppressWarnings("WeakerAccess")
 public class HtmlToPdfFileConverter {
-    private static final String EXPECT_FILE_AS_STREAM_FROM_STD_IN = "-";
+    public static final int COMMAND_TIMEOUT_IN_MILLIS = 15_000;
+    public static final String EXPECT_FILE_AS_STREAM_FROM_STD_IN = "-";
     private static final Object LOCK = new Object[0];
 
     //TODO: Check response code from wkhtmltopdf and output error message from console
@@ -37,30 +39,35 @@ public class HtmlToPdfFileConverter {
     @GuardedBy("HtmlToPdfFileConverter.LOCK")
     protected final File wkHtmlToPdfBinary;
 
-    public HtmlToPdfFileConverter(File wkHtmlToPdfBinary) {
-        this.wkHtmlToPdfBinary = wkHtmlToPdfBinary;
-    }
+    protected final TempFileGenerator tempFileGenerator;
 
     public HtmlToPdfFileConverter() {
-        this(new HtmlToPdfBinaryResolver().resolve());
+        this(new HtmlToPdfBinaryResolver().resolve(), new TempFileGenerator());
+    }
+
+    public HtmlToPdfFileConverter(File wkHtmlToPdfBinary, TempFileGenerator tempFileGenerator) {
+        this.wkHtmlToPdfBinary = wkHtmlToPdfBinary;
+        this.tempFileGenerator = tempFileGenerator;
     }
 
     /**
      * Generates a PDF from the provided HTML and writes it to a temporary file.
      *
      * <p>Instead of writing the HTML to file first, it is piped directly from memory into the
-     * wkhtmltopdf binary, saving us some disk IO.  For more information, see the {@link HtmlPumpStreamHandler}.
+     * wkhtmltopdf binary, saving us some disk IO.  For more information, see the {@link
+     * HtmlPumpStreamHandler}.
      *
-     * <p>The resulting {@link PdfFile} implements {@link java.io.Closeable} to simplify deleting the file on disk after we're done with it.
+     * <p>The resulting {@link PdfFile} implements {@link java.io.Closeable} to simplify deleting
+     * the file on disk after we're done with it.
      *
      * <p>Usage example:
      * <pre>
-     *          try (PdfFile pdfFile = htmlToPdfFileConverter.convert(html)) {
-     *              ...
-     *          } catch (IOException exception) {
-     *              log.error("An error occurred in the HTML -> PDF conversion.", exception);
-     *              throw exception;
-     *          }
+     *   try (PdfFile pdfFile = htmlToPdfFileConverter.convert(html)) {
+     *       ...
+     *   } catch (IOException exception) {
+     *       log.error("An error occurred in the HTML -> PDF conversion.", exception);
+     *       throw exception;
+     *   }
      * </pre>
      *
      * @return a {@link PdfFile} containing a reference to the PDF file that was created
@@ -70,34 +77,39 @@ public class HtmlToPdfFileConverter {
     }
 
     /**
-     * Generates a PDF from the provided HTML and writes it to the provided outputFile.
+     * {@link #tryToConvert(String)} but also accepts a file to write the PDF to.
      *
-     * <p>Instead of writing the HTML to file first, it is piped directly from memory into the
-     * wkhtmltopdf binary, saving us some disk IO.  For more information, see the {@link HtmlPumpStreamHandler}.
+     * @see #tryToConvert(String)
+     * @see #tryToConvert(String, File, Function)
+     */
+    public PdfFile tryToConvert(String html, Function<CommandLine, CommandLine> commandCustomizer) throws HtmlToPdfConversionException {
+        return tryToConvert(html, tempFileGenerator.generateTempOutputFile(), commandCustomizer);
+    }
+
+    /**
+     * {@link #tryToConvert(String)} but also accepts a file to write the PDF to.
      *
-     * <p>The resulting {@link PdfFile} implements {@link java.io.Closeable} to simplify deleting the file on disk after we're done with it.
-     *
-     * <p>Usage example:
-     * <pre>
-     *          try (PdfFile pdfFile = htmlToPdfFileConverter.convert(html)) {
-     *              ...
-     *          } catch (IOException exception) {
-     *              log.error("An error occurred in the HTML -> PDF conversion.", exception);
-     *              throw exception;
-     *          }
-     * </pre>
-     *
-     * @return a {@link PdfFile} containing a reference to the PDF file that was created
+     * @see #tryToConvert(String)
+     * @see #tryToConvert(String, File, Function)
      */
     public PdfFile tryToConvert(String html, File outputFile) throws HtmlToPdfConversionException {
-        synchronized (LOCK) {
-            CommandLine command = createConversionCommand(outputFile);
+        return tryToConvert(html, outputFile, Function.identity());
+    }
 
-            return tryToExecuteCommand(
-                    command,
-                    html,
-                    outputFile
+    /**
+     * {@link #tryToConvert(String, File)} but also accepts a function to allow for customizing the
+     * call to the `wkhtmltopdf` binary.
+     *
+     * @see #tryToConvert(String)
+     * @see #tryToConvert(String, File)
+     */
+    public PdfFile tryToConvert(String html, File outputFile, Function<CommandLine, CommandLine> commandCustomizer) throws HtmlToPdfConversionException {
+        synchronized (LOCK) {
+            CommandLine command = commandCustomizer.apply(
+                    createConversionCommand(outputFile)
             );
+
+            return tryToExecuteCommand(command, html, outputFile);
         }
     }
 
@@ -117,6 +129,7 @@ public class HtmlToPdfFileConverter {
         return new PdfFile(outputFile);
     }
 
+    //TODO: Test this
     protected int executeCommand(Executor executor, PumpStreamHandler streamHandler, CommandLine command) throws IOException {
         executor.setWatchdog(createCommandLineWatchdog());
         executor.setStreamHandler(streamHandler);
@@ -124,6 +137,6 @@ public class HtmlToPdfFileConverter {
     }
 
     protected ExecuteWatchdog createCommandLineWatchdog() {
-        return new ExecuteWatchdog(15_000);
+        return new ExecuteWatchdog(COMMAND_TIMEOUT_IN_MILLIS);
     }
 }

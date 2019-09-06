@@ -53,14 +53,13 @@ public class HtmlToPdfBinaryResolver {
 
     protected boolean isEnvironmentVariableSet() {
         log.debug("{} system variable is set to {}", BINARY_ENV_VAR_NAME, System.getenv(BINARY_ENV_VAR_NAME));
-        return StringUtils.isNotEmpty(
-                System.getenv(BINARY_ENV_VAR_NAME)
-        );
+        return StringUtils.isNotEmpty(System.getenv(BINARY_ENV_VAR_NAME));
     }
 
     protected File asExecutable(File binary) {
         if (!Files.isExecutable(binary.toPath())) {
             if (!binary.setExecutable(true)) {
+                //TODO: Replace with named exception
                 throw new RuntimeException("Failed to make '" + binary.getName() + "' executable");
             }
         }
