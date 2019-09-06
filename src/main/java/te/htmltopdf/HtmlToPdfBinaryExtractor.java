@@ -18,9 +18,6 @@ import te.htmltopdf.domain.exceptions.BinaryClassLoaderException;
 import te.htmltopdf.domain.exceptions.BinaryExtractionException;
 import te.htmltopdf.domain.exceptions.TempFileCreationException;
 
-import static io.vavr.API.$;
-import static io.vavr.API.Case;
-import static io.vavr.API.Match;
 import static org.apache.commons.io.FilenameUtils.getExtension;
 import static org.apache.commons.io.FilenameUtils.removeExtension;
 import static org.apache.commons.lang3.SystemUtils.IS_OS_MAC;
@@ -29,6 +26,7 @@ import static org.apache.commons.lang3.SystemUtils.IS_OS_WINDOWS;
 /**
  * Extracts a wkhtmltopdf binary out of this JAR to a temporary directory.
  */
+@SuppressWarnings("WeakerAccess")
 public class HtmlToPdfBinaryExtractor {
     private static final Logger log = LoggerFactory.getLogger(HtmlToPdfBinaryExtractor.class);
 
@@ -53,11 +51,9 @@ public class HtmlToPdfBinaryExtractor {
     }
 
     protected String determineBinaryFilename() {
-        return Match(true).of(
-                Case($(IS_OS_WINDOWS), "wkhtmltopdf_win.exe"),
-                Case($(IS_OS_MAC), "wkhtmltopdf_mac"),
-                Case($(), "wkhtmltopdf_linux")
-        );
+        if (IS_OS_MAC) return "wkhtmltopdf_mac";
+        if (IS_OS_WINDOWS) return "wkhtmltopdf_win.exe";
+        return "wkhtmltopdf_linux";
     }
 
     protected Tuple3<String, File, InputStream> createEmptyTempFile(Tuple3<String, File, InputStream> extraction) {
@@ -69,7 +65,7 @@ public class HtmlToPdfBinaryExtractor {
     }
 
     /**
-     * Opens a stream to one of the binaries packaged in the library so it can be streamed to disk.
+     * Opens a stream to one of the binaries packaged in this library.
      *
      * @throws BinaryClassLoaderException when the Thread's context classloader is null or when
      *                                    fetching the resource as a stream returns null
