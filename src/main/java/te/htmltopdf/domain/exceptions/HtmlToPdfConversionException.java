@@ -1,7 +1,7 @@
 package te.htmltopdf.domain.exceptions;
 
 import org.apache.commons.exec.DefaultExecutor;
-import te.htmltopdf.HtmlPumpStreamHandler;
+import te.htmltopdf.wkhtmltopdf.HtmlPumpStreamHandler;
 
 import java.io.IOException;
 

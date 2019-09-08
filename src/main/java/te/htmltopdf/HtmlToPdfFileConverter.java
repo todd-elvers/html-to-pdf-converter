@@ -16,6 +16,8 @@ import java.util.function.Function;
 import io.vavr.control.Try;
 import te.htmltopdf.domain.PdfFile;
 import te.htmltopdf.domain.exceptions.HtmlToPdfConversionException;
+import te.htmltopdf.wkhtmltopdf.HtmlPumpStreamHandler;
+import te.htmltopdf.wkhtmltopdf.WkHtmlToPdfBinaryResolver;
 
 /**
  * Converts HTML documents to PDF documents.
@@ -42,7 +44,7 @@ public class HtmlToPdfFileConverter {
     protected final TempFileGenerator tempFileGenerator;
 
     public HtmlToPdfFileConverter() {
-        this(new HtmlToPdfBinaryResolver().resolve(), new TempFileGenerator());
+        this(new WkHtmlToPdfBinaryResolver().resolve(), new TempFileGenerator());
     }
 
     public HtmlToPdfFileConverter(File wkHtmlToPdfBinary, TempFileGenerator tempFileGenerator) {
