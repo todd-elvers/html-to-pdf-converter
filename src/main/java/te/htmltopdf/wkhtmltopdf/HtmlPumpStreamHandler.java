@@ -1,4 +1,4 @@
-package te.htmltopdf;
+package te.htmltopdf.wkhtmltopdf;
 
 import org.apache.commons.exec.PumpStreamHandler;
 import org.apache.commons.io.IOUtils;

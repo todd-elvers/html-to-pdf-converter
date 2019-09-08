@@ -1,17 +1,16 @@
-package te.htmltopdf.pdf
+package te.htmltopdf.wkhtmltopdf
 
 import org.apache.commons.lang3.SystemUtils
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import spock.lang.IgnoreIf
 import spock.lang.Specification
-import te.htmltopdf.HtmlToPdfBinaryResolver
 import te.htmltopdf.testHelpers.ResourceFinding
 
 import java.nio.file.Files
 
-class HtmlToPdfBinaryResolverTest extends Specification implements ResourceFinding {
-    HtmlToPdfBinaryResolver binaryResolver = []
+class WkHtmlToPdfBinaryResolverTest extends Specification implements ResourceFinding {
+    WkHtmlToPdfBinaryResolver binaryResolver = []
 
     @Rule
     TemporaryFolder temporaryFolder = new TemporaryFolder()
@@ -42,7 +41,7 @@ class HtmlToPdfBinaryResolverTest extends Specification implements ResourceFindi
     void "will use binary from environment variable over binary from JAR"() {
         given:
             String binaryFilenameFromEnv = "provided-binary"
-            HtmlToPdfBinaryResolver binaryResolver = new HtmlToPdfBinaryResolver() {
+            WkHtmlToPdfBinaryResolver binaryResolver = new WkHtmlToPdfBinaryResolver() {
                 protected boolean isEnvironmentVariableSet() {
                     return true
                 }
@@ -64,7 +63,7 @@ class HtmlToPdfBinaryResolverTest extends Specification implements ResourceFindi
     void "will fallback to binary from JAR if binary from environment variable is invalid"() {
         given:
             String binaryFilenameFromEnv = "provided-binary"
-            HtmlToPdfBinaryResolver binaryResolver = new HtmlToPdfBinaryResolver() {
+            WkHtmlToPdfBinaryResolver binaryResolver = new WkHtmlToPdfBinaryResolver() {
                 protected boolean isEnvironmentVariableSet() {
                     return true
                 }

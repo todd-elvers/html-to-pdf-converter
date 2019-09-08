@@ -1,4 +1,4 @@
-package te.htmltopdf;
+package te.htmltopdf.wkhtmltopdf;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -15,14 +15,14 @@ import java.nio.file.Files;
  * Override this by setting the environment variable <code>WKHTMLTOPDF_BINARY</code> to the path of a wkhtmltopdf binary
  * you wish to use instead.
  */
-public class HtmlToPdfBinaryResolver {
-    private static final Logger log = LoggerFactory.getLogger(HtmlToPdfBinaryResolver.class);
+public class WkHtmlToPdfBinaryResolver {
+    private static final Logger log = LoggerFactory.getLogger(WkHtmlToPdfBinaryResolver.class);
     public static final String BINARY_ENV_VAR_NAME = "WKHTMLTOPDF_BINARY";
 
-    protected final HtmlToPdfBinaryExtractor htmlToPdfBinaryExtractor;
+    protected final WkHtmlToPdfBinaryExtractor binaryExtractor;
 
-    public HtmlToPdfBinaryResolver() {
-        this.htmlToPdfBinaryExtractor = new HtmlToPdfBinaryExtractor();
+    public WkHtmlToPdfBinaryResolver() {
+        this.binaryExtractor = new WkHtmlToPdfBinaryExtractor();
     }
 
     /**
@@ -44,7 +44,7 @@ public class HtmlToPdfBinaryResolver {
             }
         }
 
-        return htmlToPdfBinaryExtractor.extract();
+        return binaryExtractor.extract();
     }
 
     protected File resolveBinaryFromEnvironmentVariable() {

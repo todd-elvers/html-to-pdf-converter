@@ -1,4 +1,4 @@
-package te.htmltopdf;
+package te.htmltopdf.wkhtmltopdf;
 
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
@@ -12,6 +12,7 @@ import io.vavr.Tuple;
 import io.vavr.Tuple3;
 import io.vavr.control.Option;
 import io.vavr.control.Try;
+import te.htmltopdf.TempFileGenerator;
 import te.htmltopdf.domain.exceptions.BinaryClassLoaderException;
 import te.htmltopdf.domain.exceptions.BinaryExtractionException;
 
@@ -24,16 +25,16 @@ import static org.apache.commons.lang3.SystemUtils.IS_OS_WINDOWS;
  * Extracts a wkhtmltopdf binary out of this JAR to a temporary directory.
  */
 @SuppressWarnings("WeakerAccess")
-public class HtmlToPdfBinaryExtractor {
-    private static final Logger log = LoggerFactory.getLogger(HtmlToPdfBinaryExtractor.class);
+public class WkHtmlToPdfBinaryExtractor {
+    private static final Logger log = LoggerFactory.getLogger(WkHtmlToPdfBinaryExtractor.class);
 
     protected final TempFileGenerator tempFileGenerator;
 
-    public HtmlToPdfBinaryExtractor() {
+    public WkHtmlToPdfBinaryExtractor() {
         this(new TempFileGenerator());
     }
 
-    public HtmlToPdfBinaryExtractor(TempFileGenerator tempFileGenerator) {
+    public WkHtmlToPdfBinaryExtractor(TempFileGenerator tempFileGenerator) {
         this.tempFileGenerator = tempFileGenerator;
     }
 
@@ -56,6 +57,7 @@ public class HtmlToPdfBinaryExtractor {
         return Tuple.of(determineBinaryFilename(), null, null);
     }
 
+    //TODO: Add validation to this, we want to eagerly fail when the current OS is not supported
     protected String determineBinaryFilename() {
         if (IS_OS_MAC) return "wkhtmltopdf_mac";
         if (IS_OS_WINDOWS) return "wkhtmltopdf_win.exe";
