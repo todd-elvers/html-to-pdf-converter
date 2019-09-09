@@ -20,7 +20,23 @@ public class ChromePdfOptions {
     private final String headerTemplate;
     private final String footerTemplate;
 
-    private ChromePdfOptions(Boolean landscape, Boolean displayHeaderFooter, Boolean printBackground, Boolean ignoreInvalidPageRanges, Boolean preferCSSPageSize, Double scale, Double paperWidth, Double paperHeight, Double marginTop, Double marginBottom, Double marginLeft, Double marginRight, String pageRanges, String headerTemplate, String footerTemplate) {
+    private ChromePdfOptions(
+            Boolean landscape,
+            Boolean displayHeaderFooter,
+            Boolean printBackground,
+            Boolean ignoreInvalidPageRanges,
+            Boolean preferCSSPageSize,
+            Double scale,
+            Double paperWidth,
+            Double paperHeight,
+            Double marginTop,
+            Double marginBottom,
+            Double marginLeft,
+            Double marginRight,
+            String pageRanges,
+            String headerTemplate,
+            String footerTemplate
+    ) {
         this.landscape = landscape;
         this.displayHeaderFooter = displayHeaderFooter;
         this.printBackground = printBackground;
