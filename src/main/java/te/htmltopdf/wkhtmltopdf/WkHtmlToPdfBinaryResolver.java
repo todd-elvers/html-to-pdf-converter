@@ -1,8 +1,10 @@
 package te.htmltopdf.wkhtmltopdf;
 
+import io.vavr.control.Try;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import te.htmltopdf.domain.exceptions.MakingFileExecutableException;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -29,7 +31,7 @@ public class WkHtmlToPdfBinaryResolver {
      * @return an executable wkhtmltopdf binary
      */
     public File resolve() {
-        return asExecutable(resolveBinaryFile());
+        return makeExecutable(resolveBinaryFile());
     }
 
     protected File resolveBinaryFile() {
@@ -56,12 +58,16 @@ public class WkHtmlToPdfBinaryResolver {
         return StringUtils.isNotEmpty(System.getenv(BINARY_ENV_VAR_NAME));
     }
 
-    protected File asExecutable(File binary) {
+    protected File makeExecutable(File binary) {
         if (!Files.isExecutable(binary.toPath())) {
-            if (!binary.setExecutable(true)) {
-                //TODO: Replace with named exception
-                throw new RuntimeException("Failed to make '" + binary.getName() + "' executable");
-            }
+            Try.of(() -> binary.setExecutable(true))
+                    .andThen(isExecutable -> {
+                        if (!isExecutable) throw new MakingFileExecutableException(binary);
+                    })
+                    .onFailure(securityException -> {
+                        throw new MakingFileExecutableException(binary, securityException);
+                    })
+                    .get();
         }
 
         return binary;
