@@ -55,17 +55,10 @@ public class WkHtmlToPdfBinaryResolver {
         String envVariable = envVariables.get(BINARY_ENV_VAR_NAME);
         String sysProperty = systemProperties.getProperty(BINARY_ENV_VAR_NAME);
 
-        if (isNotBlank(envVariable)) {
-            log.info("Custom binary path found @ {}", envVariable);
-            return Option.of(envVariable);
-        }
-
-        if (isNotBlank(sysProperty)) {
-            log.info("Custom binary path found @ {}", sysProperty);
-            return Option.of(sysProperty);
-        }
-
-        return Option.none();
+        return Option
+                .when(isNotBlank(envVariable), envVariable)
+                .orElse(Option.when(isNotBlank(sysProperty), sysProperty))
+                .peek(customPath -> log.info("Custom binary path found @ {}", customPath));
     }
 
     protected File makeExecutable(File binary) {
