@@ -1,5 +1,6 @@
 package te.htmltopdf.chrome;
 
+import te.htmltopdf.domain.ChromePdfOptions;
 import te.htmltopdf.domain.PdfFile;
 
 import java.io.File;

@@ -1,6 +1,6 @@
-package te.htmltopdf.chrome;
+package te.htmltopdf.domain;
 
-class ChromePdfOptions {
+public class ChromePdfOptions {
 
     private Boolean landscape;
     private Boolean displayHeaderFooter;
