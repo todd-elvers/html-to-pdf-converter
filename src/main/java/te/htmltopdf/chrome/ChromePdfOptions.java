@@ -265,7 +265,7 @@ class ChromePdfOptions {
             return this;
         }
 
-        public ChromePdfOptions createChromePdfOptions() {
+        public ChromePdfOptions build() {
             return new ChromePdfOptions(landscape, displayHeaderFooter, printBackground, ignoreInvalidPageRanges, preferCSSPageSize, scale, paperWidth, paperHeight, marginTop, marginBottom, marginLeft, marginRight, pageRanges, headerTemplate, footerTemplate);
         }
     }
