@@ -1,23 +1,17 @@
 package te.htmltopdf;
 
+import io.vavr.control.Try;
 import net.jcip.annotations.GuardedBy;
 import net.jcip.annotations.ThreadSafe;
-
-import org.apache.commons.exec.CommandLine;
-import org.apache.commons.exec.DefaultExecutor;
-import org.apache.commons.exec.ExecuteWatchdog;
-import org.apache.commons.exec.Executor;
-import org.apache.commons.exec.PumpStreamHandler;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.function.Function;
-
-import io.vavr.control.Try;
+import org.apache.commons.exec.*;
 import te.htmltopdf.domain.PdfFile;
 import te.htmltopdf.domain.exceptions.HtmlToPdfConversionException;
 import te.htmltopdf.wkhtmltopdf.HtmlPumpStreamHandler;
 import te.htmltopdf.wkhtmltopdf.WkHtmlToPdfBinaryResolver;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.function.Function;
 
 /**
  * Converts HTML documents to PDF documents.
@@ -79,7 +73,8 @@ public class HtmlToPdfFileConverter {
     }
 
     /**
-     * {@link #tryToConvert(String)} but also accepts a file to write the PDF to.
+     * {@link #tryToConvert(String)} but also accepts a function to allow for customizing the
+     * call to the `wkhtmltopdf` binary.
      *
      * @see #tryToConvert(String)
      * @see #tryToConvert(String, File, Function)
@@ -89,7 +84,7 @@ public class HtmlToPdfFileConverter {
     }
 
     /**
-     * {@link #tryToConvert(String)} but also accepts a file to write the PDF to.
+     * {@link #tryToConvert(String)} but also accepts the file to write the PDF to.
      *
      * @see #tryToConvert(String)
      * @see #tryToConvert(String, File, Function)
