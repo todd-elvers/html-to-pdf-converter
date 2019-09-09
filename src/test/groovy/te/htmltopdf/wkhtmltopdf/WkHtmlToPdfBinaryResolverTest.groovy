@@ -1,25 +1,28 @@
 package te.htmltopdf.wkhtmltopdf
 
-import org.apache.commons.lang3.SystemUtils
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
-import spock.lang.IgnoreIf
 import spock.lang.Specification
-import te.htmltopdf.testHelpers.ResourceFinding
+import spock.lang.Subject
+import te.htmltopdf.domain.exceptions.MakingFileExecutableException
 
+import java.nio.file.AccessMode
+import java.nio.file.FileSystem
 import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.spi.FileSystemProvider
 
-class WkHtmlToPdfBinaryResolverTest extends Specification implements ResourceFinding {
+class WkHtmlToPdfBinaryResolverTest extends Specification {
+
+    @Subject
     WkHtmlToPdfBinaryResolver binaryResolver = []
 
     @Rule
     TemporaryFolder temporaryFolder = new TemporaryFolder()
 
-    @IgnoreIf({ System.properties['os.name']?.toString()?.toLowerCase()?.contains("windows") })
     void "always ensures the binary is instantiated with the executable flag"() {
         given: 'a webkitHtmlToPdf binary missing the executable flag'
-            File wkHtmlToPdfBinary = getOsSpecificBinary()
-            wkHtmlToPdfBinary.setExecutable(false)
+            File wkHtmlToPdfBinary = newMockFile(false)
             assert !Files.isExecutable(wkHtmlToPdfBinary.toPath())
 
         when: 'webkitHtmlToPdf binary bean is instantiated'
@@ -29,13 +32,33 @@ class WkHtmlToPdfBinaryResolverTest extends Specification implements ResourceFin
             Files.isExecutable(webkitHtmlToPdfExecutable.toPath())
     }
 
-    @IgnoreIf({ System.properties['os.name']?.toString()?.toLowerCase()?.contains("windows") })
-    void "throws RuntimeException if the wkhtmltopdf's executable flag cannot be set"() {
+    void "wraps any exception thrown when trying to make a file executable"() {
+        given: 'a non-executable file that throws an exception when permissions are changed'
+            File input = newMockFile(false)
+            input.setExecutable(true) >> { throw new SecurityException("mock-exception") }
+            assert !Files.isExecutable(input.toPath())
+
         when:
-            binaryResolver.asExecutable(new File('not-going-to-find-this'))
+            binaryResolver.makeExecutable(input)
 
         then:
-            thrown(RuntimeException)
+            def ex = thrown(MakingFileExecutableException)
+            ex.cause instanceof SecurityException
+            ex.cause.message == "mock-exception"
+    }
+
+    private File newMockFile(boolean isExecutable) {
+        return Mock(File) {
+            toPath() >> Mock(Path) {
+                getFileSystem() >> Mock(FileSystem) {
+                    provider() >> Mock(FileSystemProvider) {
+                        checkAccess(_ as Path, _ as AccessMode[]) >> { file, permissionsToCheck ->
+                            if (!isExecutable) throw new IOException("Access denied, etc.")
+                        }
+                    }
+                }
+            }
+        }
     }
 
     void "will use binary from environment variable over binary from JAR"() {
@@ -81,17 +104,5 @@ class WkHtmlToPdfBinaryResolverTest extends Specification implements ResourceFin
             binary.exists()
             binary.name != binaryFilenameFromEnv
     }
-
-
-    private static File getOsSpecificBinary() {
-        if (SystemUtils.IS_OS_MAC) {
-            return findResourceFile("wkhtmltopdf_mac")
-        } else if (SystemUtils.IS_OS_WINDOWS) {
-            return findResourceFile("wkhtmltopdf_win.exe")
-        } else {
-            return findResourceFile("wkhtmltopdf_linux")
-        }
-    }
-
 
 }
