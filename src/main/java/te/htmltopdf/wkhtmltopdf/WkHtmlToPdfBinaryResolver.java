@@ -43,7 +43,6 @@ public class WkHtmlToPdfBinaryResolver {
      * @return a reference to the executable wkhtmltopdf binary cached in the temporary file
      * or specified in the environment variable, or system property, {@link #BINARY_ENV_VAR_NAME}.
      */
-    //TODO: Need a little more testing to ensure this is doing what we expect
     public File resolve() {
         return checkForCustomBinaryPath(System.getenv(), System.getProperties())
                 .map(File::new)
@@ -71,14 +70,14 @@ public class WkHtmlToPdfBinaryResolver {
 
     protected File makeExecutable(File binary) {
         if (!Files.isExecutable(binary.toPath())) {
-            Try.of(() -> binary.setExecutable(true))
-                    .andThen(isExecutable -> {
-                        if (!isExecutable) throw new MakingFileExecutableException(binary);
-                    })
-                    .onFailure(securityException -> {
-                        throw new MakingFileExecutableException(binary, securityException);
-                    })
-                    .get();
+            boolean isExecutableNow = Try.of(() -> binary.setExecutable(true))
+                    .getOrElseThrow(securityException ->
+                            new MakingFileExecutableException(binary, securityException)
+                    );
+
+            if (!isExecutableNow) {
+                throw new MakingFileExecutableException(binary);
+            }
         }
 
         return binary;
