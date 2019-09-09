@@ -1,21 +1,28 @@
 package te.htmltopdf.wkhtmltopdf;
 
+import io.vavr.control.Option;
 import io.vavr.control.Try;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import te.htmltopdf.domain.exceptions.MakingFileExecutableException;
 
 import java.io.File;
 import java.nio.file.Files;
+import java.util.Map;
+import java.util.Properties;
+
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 /**
  * Resolves the location of the wkhtmltopdf binary to use for converting.
  *
- * <p>By default, this will extract the binary for your OS to a temp. directory.
+ * <p>The OS-specific binary for your operating system will be lazily cached to a temporary file
+ * upon the first call to {@link #resolve()}.  All subsequent calls will utilize the cached binary.
+ * <p>
  * <br/>
- * Override this by setting the environment variable <code>WKHTMLTOPDF_BINARY</code> to the path of a wkhtmltopdf binary
- * you wish to use instead.
+ * <p>
+ * To disable the caching process stated above simply set the environment variable (or system
+ * property) <code>WKHTMLTOPDF_BINARY</code> to the path of the wkhtmltopdf binary on your system.
  */
 public class WkHtmlToPdfBinaryResolver {
     private static final Logger log = LoggerFactory.getLogger(WkHtmlToPdfBinaryResolver.class);
@@ -23,39 +30,43 @@ public class WkHtmlToPdfBinaryResolver {
 
     protected final WkHtmlToPdfBinaryExtractor binaryExtractor;
 
+
+    public WkHtmlToPdfBinaryResolver(WkHtmlToPdfBinaryExtractor binaryExtractor) {
+        this.binaryExtractor = binaryExtractor;
+    }
+
     public WkHtmlToPdfBinaryResolver() {
         this.binaryExtractor = new WkHtmlToPdfBinaryExtractor();
     }
 
     /**
-     * @return an executable wkhtmltopdf binary
+     * @return a reference to the executable wkhtmltopdf binary cached in the temporary file
+     * or specified in the environment variable, or system property, {@link #BINARY_ENV_VAR_NAME}.
      */
+    //TODO: Need a little more testing to ensure this is doing what we expect
     public File resolve() {
-        return makeExecutable(resolveBinaryFile());
+        return checkForCustomBinaryPath(System.getenv(), System.getProperties())
+                .map(File::new)
+                .orElse(() -> Option.of(binaryExtractor.extract()))
+                .map(this::makeExecutable)
+                .get();
     }
 
-    protected File resolveBinaryFile() {
-        if (isEnvironmentVariableSet()) {
-            File binary = resolveBinaryFromEnvironmentVariable();
+    protected Option<String> checkForCustomBinaryPath(Map<String, String> envVariables, Properties systemProperties) {
+        String envVariable = envVariables.get(BINARY_ENV_VAR_NAME);
+        String sysProperty = systemProperties.getProperty(BINARY_ENV_VAR_NAME);
 
-            if (binary.exists()) {
-                log.info("Using binary from environment variable @ {}", binary.getAbsolutePath());
-                return binary;
-            } else {
-                log.error("Binary specified in environment variable could not be found @ {}", binary.getAbsolutePath());
-            }
+        if (isNotBlank(envVariable)) {
+            log.info("Custom binary path found @ {}", envVariable);
+            return Option.of(envVariable);
         }
 
-        return binaryExtractor.extract();
-    }
+        if (isNotBlank(sysProperty)) {
+            log.info("Custom binary path found @ {}", sysProperty);
+            return Option.of(sysProperty);
+        }
 
-    protected File resolveBinaryFromEnvironmentVariable() {
-        return new File(System.getenv(BINARY_ENV_VAR_NAME));
-    }
-
-    protected boolean isEnvironmentVariableSet() {
-        log.debug("{} system variable is set to {}", BINARY_ENV_VAR_NAME, System.getenv(BINARY_ENV_VAR_NAME));
-        return StringUtils.isNotEmpty(System.getenv(BINARY_ENV_VAR_NAME));
+        return Option.none();
     }
 
     protected File makeExecutable(File binary) {

@@ -12,7 +12,7 @@ class WkHtmlToPdfBinaryExtractorTest extends Specification {
         given:
             def binaryExtractor = new WkHtmlToPdfBinaryExtractor() {
                 protected Tuple3<String, File, InputStream> createEmptyTempFile(Tuple3<String, File, InputStream> extraction) {
-                    throw new TempFileCreationException()
+                    throw new TempFileCreationException("mock-exception", new IOException())
                 }
             }
 
@@ -20,7 +20,9 @@ class WkHtmlToPdfBinaryExtractorTest extends Specification {
             binaryExtractor.extract()
 
         then:
-            thrown(TempFileCreationException)
+            def x = thrown(TempFileCreationException)
+            x.message == "mock-exception"
+            x.cause instanceof IOException
     }
 
     void "throws a BinaryClassLoaderException if a file cannot be found on the classpath"() {
