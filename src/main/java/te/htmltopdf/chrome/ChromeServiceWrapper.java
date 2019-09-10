@@ -3,6 +3,7 @@ package te.htmltopdf.chrome;
 import com.github.kklisura.cdt.launch.ChromeLauncher;
 import com.github.kklisura.cdt.services.ChromeDevToolsService;
 import com.github.kklisura.cdt.services.ChromeService;
+import com.github.kklisura.cdt.services.exceptions.ChromeServiceException;
 import com.github.kklisura.cdt.services.types.ChromeTab;
 
 class ChromeServiceWrapper {
@@ -18,29 +19,30 @@ class ChromeServiceWrapper {
         return chromeLauncher;
     }
 
-    private ChromeService getChromeService() {
-        if (!isChromeAlive() || chromeService != null) {
+    private ChromeService getChromeService() throws ChromeServiceException {
+        if (!isChromeAlive() || chromeService == null) {
             chromeService = getChromeLauncher().launch(true);
         }
 
         return chromeService;
     }
 
-    boolean isChromeAlive() {
+    public boolean isChromeAlive() {
         return chromeLauncher != null && chromeLauncher.isAlive();
     }
 
-    void closeTab(ChromeTab tab) {
+    public void closeTab(ChromeTab tab) {
         if (tab != null) {
             chromeService.closeTab(tab);
         }
     }
 
-    ChromeTab getChromeTab() {
+    public ChromeTab getChromeTab() throws ChromeServiceException {
         return getChromeService().createTab();
     }
 
-    ChromeDevToolsService getChromeDevToolsService(ChromeTab tab) {
+    public ChromeDevToolsService getChromeDevToolsService(ChromeTab tab)
+        throws ChromeServiceException {
         return getChromeService().createDevToolsService(tab);
     }
 }
