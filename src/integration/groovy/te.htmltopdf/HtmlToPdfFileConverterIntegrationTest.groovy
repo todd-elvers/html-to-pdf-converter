@@ -17,7 +17,7 @@ class HtmlToPdfFileConverterIntegrationTest extends Specification implements Res
 
     void "can generate a PDF from HTML with no relative links"() {
         given:
-            String html = findResourceFile("example.htm").getText()
+        String html = findResourceFile("wkhtmltopdf-test-page.htm").getText()
             File outputFile = temporaryFolder.newFile("example.pdf")
 
         when:
