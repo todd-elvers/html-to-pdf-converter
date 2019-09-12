@@ -4,12 +4,12 @@ import groovy.transform.InheritConstructors
 import org.apache.commons.exec.CommandLine
 import spock.lang.Specification
 import spock.lang.Subject
-import te.htmltopdf.domain.exceptions.HtmlToPdfConversionException
+import te.htmltopdf.wkhtmltopdf.domain.exceptions.HtmlToPdfConversionException
 
-class HtmlToPdfFileConverterTest extends Specification {
+class WkHtmlToPdfConverterTest extends Specification {
 
     @Subject
-    HtmlToPdfFileConverter htmlToPdfFileConverter = []
+    WkHtmlToPdfConverter htmlToPdfFileConverter = []
 
     def "commandCustomizer is called before our command is executed"() {
         given:

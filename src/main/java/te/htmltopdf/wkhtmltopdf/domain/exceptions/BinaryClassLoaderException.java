@@ -1,4 +1,4 @@
-package te.htmltopdf.domain.exceptions;
+package te.htmltopdf.wkhtmltopdf.domain.exceptions;
 
 public class BinaryClassLoaderException extends RuntimeException {
 

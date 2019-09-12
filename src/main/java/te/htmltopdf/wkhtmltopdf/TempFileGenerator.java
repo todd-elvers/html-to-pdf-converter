@@ -1,10 +1,10 @@
-package te.htmltopdf;
+package te.htmltopdf.wkhtmltopdf;
 
 import java.io.File;
 import java.util.function.Function;
 
 import io.vavr.control.Try;
-import te.htmltopdf.domain.exceptions.TempFileCreationException;
+import te.htmltopdf.wkhtmltopdf.domain.exceptions.TempFileCreationException;
 
 /**
  * Responsible for generating temporary files in the temporary directory.

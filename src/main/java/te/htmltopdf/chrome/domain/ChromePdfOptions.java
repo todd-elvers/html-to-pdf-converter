@@ -1,4 +1,4 @@
-package te.htmltopdf.domain;
+package te.htmltopdf.chrome.domain;
 
 public class ChromePdfOptions {
 

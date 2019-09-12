@@ -1,4 +1,4 @@
-package te.htmltopdf.domain.exceptions;
+package te.htmltopdf.wkhtmltopdf.domain.exceptions;
 
 import org.apache.commons.exec.DefaultExecutor;
 import te.htmltopdf.wkhtmltopdf.HtmlPumpStreamHandler;

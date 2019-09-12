@@ -1,4 +1,4 @@
-package te.htmltopdf.domain.exceptions;
+package te.htmltopdf.wkhtmltopdf.domain.exceptions;
 
 import io.vavr.control.Option;
 

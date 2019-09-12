@@ -12,9 +12,8 @@ import io.vavr.Tuple;
 import io.vavr.Tuple3;
 import io.vavr.control.Option;
 import io.vavr.control.Try;
-import te.htmltopdf.TempFileGenerator;
-import te.htmltopdf.domain.exceptions.BinaryClassLoaderException;
-import te.htmltopdf.domain.exceptions.BinaryExtractionException;
+import te.htmltopdf.wkhtmltopdf.domain.exceptions.BinaryClassLoaderException;
+import te.htmltopdf.wkhtmltopdf.domain.exceptions.BinaryExtractionException;
 
 import static org.apache.commons.io.FilenameUtils.getExtension;
 import static org.apache.commons.io.FilenameUtils.removeExtension;

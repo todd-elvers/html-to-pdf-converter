@@ -1,20 +1,24 @@
-package te.htmltopdf.chrome;
+package te.htmltopdf;
 
 import java.io.File;
-import te.htmltopdf.domain.ChromePdfOptions;
-import te.htmltopdf.domain.PdfFile;
+import te.htmltopdf.chrome.ChromePdfFileGenerator;
+import te.htmltopdf.chrome.domain.ChromePdfOptions;
+import te.htmltopdf.chrome.domain.WritablePDFContents;
 
-class HtmlToPdfFileConverter {
+public class ChromeHtmlToPdfConverter {
 
-    //TODO: Remove this hard coding
-    public static final String INPUT_FILE_PATH = "C:\\Users\\Todd\\Desktop\\big.html";
+    private final ChromePdfFileGenerator chromePdfGenerator;
 
-    private ChromePdfFileGenerator chromePdfGenerator = new ChromePdfFileGenerator();
+    public ChromeHtmlToPdfConverter() {
+        this.chromePdfGenerator = new ChromePdfFileGenerator();
+    }
 
-    // Works perfectly with HTML we haven't modified
-    // tl;dr having a method that simply takes a string of HTML is non-trivial
+    public ChromeHtmlToPdfConverter(ChromePdfFileGenerator chromePdfGenerator) {
+        this.chromePdfGenerator = chromePdfGenerator;
+    }
+
     //TODO: Add a String equivalent of this once the rest of the logic is flushed out
-    PdfFile convert(File htmlContents) {
+    public WritablePDFContents tryToConvert(File htmlContents) {
         ChromePdfOptions options = new ChromePdfOptions.Builder()
             .setDisplayHeaderFooter(true)
             .setPrintBackground(true)

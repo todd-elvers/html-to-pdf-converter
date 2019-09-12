@@ -1,4 +1,4 @@
-package te.htmltopdf.domain.exceptions;
+package te.htmltopdf.wkhtmltopdf.domain.exceptions;
 
 import static org.apache.commons.lang3.SystemUtils.getJavaIoTmpDir;
 

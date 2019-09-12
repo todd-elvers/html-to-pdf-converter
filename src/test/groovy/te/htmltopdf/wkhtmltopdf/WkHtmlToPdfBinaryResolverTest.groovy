@@ -6,7 +6,7 @@ import org.junit.rules.TemporaryFolder
 import spock.lang.Specification
 import spock.lang.Subject
 import spock.util.environment.RestoreSystemProperties
-import te.htmltopdf.domain.exceptions.MakingFileExecutableException
+import te.htmltopdf.wkhtmltopdf.domain.exceptions.MakingFileExecutableException
 
 import java.nio.file.AccessMode
 import java.nio.file.FileSystem
@@ -14,7 +14,7 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.spi.FileSystemProvider
 
-import static te.htmltopdf.wkhtmltopdf.WkHtmlToPdfBinaryResolver.BINARY_ENV_VAR_NAME
+import static WkHtmlToPdfBinaryResolver.BINARY_ENV_VAR_NAME
 
 class WkHtmlToPdfBinaryResolverTest extends Specification {
 
