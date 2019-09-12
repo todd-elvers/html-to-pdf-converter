@@ -2,9 +2,9 @@ package te.htmltopdf.wkhtmltopdf
 
 import io.vavr.Tuple3
 import spock.lang.Specification
-import te.htmltopdf.domain.exceptions.BinaryClassLoaderException
-import te.htmltopdf.domain.exceptions.BinaryExtractionException
-import te.htmltopdf.domain.exceptions.TempFileCreationException
+import te.htmltopdf.wkhtmltopdf.domain.exceptions.BinaryClassLoaderException
+import te.htmltopdf.wkhtmltopdf.domain.exceptions.BinaryExtractionException
+import te.htmltopdf.wkhtmltopdf.domain.exceptions.TempFileCreationException
 
 class WkHtmlToPdfBinaryExtractorTest extends Specification {
 

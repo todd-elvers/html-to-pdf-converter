@@ -1,11 +1,11 @@
-package te.htmltopdf.domain
+package te.htmltopdf.wkhtmltopdf.domain
 
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import spock.lang.Shared
 import spock.lang.Specification
 
-class PdfFileTest extends Specification {
+class WritablePDFFileTest extends Specification {
 
     @Rule
     TemporaryFolder temporaryFolder = new TemporaryFolder()
@@ -15,7 +15,7 @@ class PdfFileTest extends Specification {
 
     def "can write the underlying PDF to any output stream"() {
         given:
-            PdfFile pdfFile = new PdfFile(newPDF())
+            WritablePDFFile pdfFile = new WritablePDFFile(newPDF())
             File newFile = temporaryFolder.newFile()
 
         when:
@@ -30,25 +30,25 @@ class PdfFileTest extends Specification {
 
     def "can return a reference to the underlying PDF"() {
         when:
-            PdfFile pdfFile = new PdfFile(newPDF())
+            WritablePDFFile pdfFile = new WritablePDFFile(newPDF())
 
         then:
-            pdfFile.fileOnDisk.exists()
-            pdfFile.fileOnDisk.text == mockFileContents
+            pdfFile.temporaryFile.exists()
+            pdfFile.temporaryFile.text == mockFileContents
     }
 
     def "calling close() deletes the underlying PDF"() {
         when:
-            PdfFile pdfFile = new PdfFile(newPDF())
+            WritablePDFFile pdfFile = new WritablePDFFile(newPDF())
 
         then:
-            pdfFile.fileOnDisk.exists()
+            pdfFile.temporaryFile.exists()
 
         when:
             pdfFile.close()
 
         then:
-            !pdfFile.fileOnDisk.exists()
+            !pdfFile.temporaryFile.exists()
     }
 
     private File newPDF() {

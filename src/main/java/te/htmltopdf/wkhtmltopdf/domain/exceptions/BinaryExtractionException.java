@@ -1,4 +1,4 @@
-package te.htmltopdf.domain.exceptions;
+package te.htmltopdf.wkhtmltopdf.domain.exceptions;
 
 public class BinaryExtractionException extends RuntimeException {
     public BinaryExtractionException(Throwable throwable) {
