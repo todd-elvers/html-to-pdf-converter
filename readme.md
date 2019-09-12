@@ -1,3 +1,7 @@
+# TODO: Fill in contents here
+Update this now that both Chrome AND wkhtmltopdf options exist.
+
+
 html-to-pdf-converter
 ---------------------------------
 
@@ -6,6 +10,15 @@ A library for converting HTML documents to PDF documents.
 <br/>
 
 ## How it works
+
+### Chrome
+
+
+### wkhtmltopdf 
+TODO: Fill in contents here
+
+<br/>
+
 
 This library uses a binary of [wkhtmltopdf](https://wkhtmltopdf.org/), Apache Exec, and synchronization for a robust, thread-safe HTML to PDF conversion process.
 
@@ -27,7 +40,7 @@ In your `build.gradle` file:
 * Under `repositories`
     * Add `maven { url "https://jitpack.io" }`, making sure it's the _last_ repo declared
 * Under `dependencies`
-    * Add `compile 'com.github.todd-elvers:html-to-pdf-converter:1.1.0'`
+    * Add `compile 'com.github.todd-elvers:html-to-pdf-converter:2.0.0'`
     
 <br/>
 
