@@ -1,9 +1,8 @@
 package te.htmltopdf.testHelpers
 
-
 import org.apache.commons.io.FileUtils
 import spock.lang.Specification
-import te.core.env.OmniPropertyReader
+import te.core.env.MultiPropertyReader
 import te.htmltopdf.WritablePDF
 
 import java.awt.*
@@ -27,11 +26,7 @@ abstract class IntegrationSpecification extends Specification implements Resourc
      * variable/property is present) to trigger this behavior.
      */
     private static boolean openResultsInBrowser() {
-        println "HERE: ${new OmniPropertyReader().containsAnyKeyIgnoringCase(VIEW_OUTPUT_FLAGS)}"
-        println "HERE: ${new OmniPropertyReader().containsAnyKeyIgnoringCase(VIEW_OUTPUT_FLAGS)}"
-        println "HERE: ${new OmniPropertyReader().containsAnyKeyIgnoringCase(VIEW_OUTPUT_FLAGS)}"
-        println "HERE: ${new OmniPropertyReader().containsAnyKeyIgnoringCase(VIEW_OUTPUT_FLAGS)}"
-        return new OmniPropertyReader().containsAnyKeyIgnoringCase(
+        return new MultiPropertyReader().containsAnyKeyIgnoringCase(
                 VIEW_OUTPUT_FLAGS
         )
     }

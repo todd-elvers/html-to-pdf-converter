@@ -11,6 +11,7 @@ class WkHtmlToPdfConverterIntegrationTest extends IntegrationSpecification {
     final String testFileName = "wkhtmltopdf-test-page.htm"
     final int expectedSizeOfPDF = 99_015
 
+    @Override
     WritablePDF convertToPDF(File testInput) {
         return htmlToPdfConverter.tryToConvert(testInput.text)
     }
