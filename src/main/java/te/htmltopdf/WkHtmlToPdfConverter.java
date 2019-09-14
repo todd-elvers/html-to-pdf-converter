@@ -73,7 +73,7 @@ public class WkHtmlToPdfConverter {
      * @return a {@link OnDiskWritablePDF} containing a reference to the PDF file that was created
      */
     public OnDiskWritablePDF tryToConvert(String html) throws IOException {
-        return tryToConvert(html, File.createTempFile("pdf", ".pdf"));
+        return tryToConvert(html, tempFileGenerator.generateTempOutputFile());
     }
 
     /**
