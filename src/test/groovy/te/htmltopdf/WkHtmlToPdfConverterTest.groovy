@@ -4,7 +4,6 @@ import groovy.transform.InheritConstructors
 import org.apache.commons.exec.CommandLine
 import spock.lang.Specification
 import spock.lang.Subject
-import te.core.env.OmniPropertyReader
 import te.htmltopdf.wkhtmltopdf.domain.exceptions.HtmlToPdfConversionException
 
 class WkHtmlToPdfConverterTest extends Specification {
@@ -12,13 +11,6 @@ class WkHtmlToPdfConverterTest extends Specification {
 
     @Subject
     WkHtmlToPdfConverter htmlToPdfFileConverter = []
-
-    def setup() {
-        println "HERE: ${new OmniPropertyReader().containsAnyKeyIgnoringCase(VIEW_OUTPUT_FLAGS)}"
-        println "HERE: ${new OmniPropertyReader().containsAnyKeyIgnoringCase(VIEW_OUTPUT_FLAGS)}"
-        println "HERE: ${new OmniPropertyReader().containsAnyKeyIgnoringCase(VIEW_OUTPUT_FLAGS)}"
-        println "HERE: ${new OmniPropertyReader().containsAnyKeyIgnoringCase(VIEW_OUTPUT_FLAGS)}"
-    }
 
     def "commandCustomizer is called before our command is executed"() {
         given:

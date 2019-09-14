@@ -12,7 +12,7 @@ repositories {
 
 //TODO: Update to Gradle 5 syntax
 dependencies {
-    compile 'com.github.todd-elvers:java-library:1.0.0'
+    compile 'com.github.todd-elvers:java-library:1.1.0'
 
     // File handling
     compile 'org.apache.commons:commons-exec:1.3'
