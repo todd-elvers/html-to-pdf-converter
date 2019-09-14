@@ -21,13 +21,13 @@ import te.htmltopdf.WritablePDF;
  * {@link #close()} will delete the underlying temporary file from disk so only call it after you
  * have written this file to the desired {@link OutputStream}.
  */
-public class WritablePDFFile implements WritablePDF, Closeable {
+public class OnDiskWritablePDF implements WritablePDF, Closeable {
 
-    private static final Logger log = LoggerFactory.getLogger(WritablePDFFile.class);
+    private static final Logger log = LoggerFactory.getLogger(OnDiskWritablePDF.class);
 
     private final File temporaryFile;
 
-    public WritablePDFFile(File temporaryFile) {
+    public OnDiskWritablePDF(File temporaryFile) {
         log.info("PDF generated and written to {}", temporaryFile.getAbsolutePath());
         this.temporaryFile = temporaryFile;
     }
@@ -35,7 +35,7 @@ public class WritablePDFFile implements WritablePDF, Closeable {
     /**
      * Writes the underlying PDF file to a given {@link OutputStream}.
      */
-    public void writeToOutputStream(OutputStream outputStream) throws IOException {
+    public void write(OutputStream outputStream) throws IOException {
         Try.withResources(() -> FileUtils.openInputStream(temporaryFile))
             .of(inputStream -> IOUtils.copy(inputStream, outputStream))
             .get();

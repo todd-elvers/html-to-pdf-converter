@@ -8,6 +8,6 @@ import java.io.OutputStream;
  */
 public interface WritablePDF {
 
-    void writeToOutputStream(OutputStream outputStream) throws IOException;
+    void write(OutputStream outputStream) throws IOException;
 
 }

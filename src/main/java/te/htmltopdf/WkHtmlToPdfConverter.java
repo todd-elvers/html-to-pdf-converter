@@ -1,18 +1,21 @@
 package te.htmltopdf;
 
 import io.vavr.control.Try;
-import net.jcip.annotations.GuardedBy;
-import net.jcip.annotations.ThreadSafe;
-import org.apache.commons.exec.*;
-import te.htmltopdf.wkhtmltopdf.HtmlPumpStreamHandler;
-import te.htmltopdf.wkhtmltopdf.TempFileGenerator;
-import te.htmltopdf.wkhtmltopdf.WkHtmlToPdfBinaryResolver;
-import te.htmltopdf.wkhtmltopdf.domain.WritablePDFFile;
-import te.htmltopdf.wkhtmltopdf.domain.exceptions.HtmlToPdfConversionException;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.function.Function;
+import net.jcip.annotations.GuardedBy;
+import net.jcip.annotations.ThreadSafe;
+import org.apache.commons.exec.CommandLine;
+import org.apache.commons.exec.DefaultExecutor;
+import org.apache.commons.exec.ExecuteWatchdog;
+import org.apache.commons.exec.Executor;
+import org.apache.commons.exec.PumpStreamHandler;
+import te.htmltopdf.wkhtmltopdf.HtmlPumpStreamHandler;
+import te.htmltopdf.wkhtmltopdf.TempFileGenerator;
+import te.htmltopdf.wkhtmltopdf.WkHtmlToPdfBinaryResolver;
+import te.htmltopdf.wkhtmltopdf.domain.OnDiskWritablePDF;
+import te.htmltopdf.wkhtmltopdf.domain.exceptions.HtmlToPdfConversionException;
 
 /**
  * Converts HTML documents to PDF documents.
@@ -52,7 +55,7 @@ public class WkHtmlToPdfConverter {
      * wkhtmltopdf binary, saving us some disk IO.  For more information, see the {@link
      * HtmlPumpStreamHandler}.
      *
-     * <p>The resulting {@link WritablePDFFile} implements {@link java.io.Closeable} to simplify deleting
+     * <p>The resulting {@link OnDiskWritablePDF} implements {@link java.io.Closeable} to simplify deleting
      * the file on disk after we're done with it.
      *
      * <p>Usage example:
@@ -65,9 +68,9 @@ public class WkHtmlToPdfConverter {
      *   }
      * </pre>
      *
-     * @return a {@link WritablePDFFile} containing a reference to the PDF file that was created
+     * @return a {@link OnDiskWritablePDF} containing a reference to the PDF file that was created
      */
-    public WritablePDFFile tryToConvert(String html) throws IOException {
+    public OnDiskWritablePDF tryToConvert(String html) throws IOException {
         return tryToConvert(html, File.createTempFile("pdf", ".pdf"));
     }
 
@@ -78,7 +81,8 @@ public class WkHtmlToPdfConverter {
      * @see #tryToConvert(String)
      * @see #tryToConvert(String, File, Function)
      */
-    public WritablePDFFile tryToConvert(String html, Function<CommandLine, CommandLine> commandCustomizer) throws HtmlToPdfConversionException {
+    public OnDiskWritablePDF tryToConvert(String html, Function<CommandLine, CommandLine> commandCustomizer)
+        throws HtmlToPdfConversionException {
         return tryToConvert(html, tempFileGenerator.generateTempOutputFile(), commandCustomizer);
     }
 
@@ -88,7 +92,7 @@ public class WkHtmlToPdfConverter {
      * @see #tryToConvert(String)
      * @see #tryToConvert(String, File, Function)
      */
-    public WritablePDFFile tryToConvert(String html, File outputFile) throws HtmlToPdfConversionException {
+    public OnDiskWritablePDF tryToConvert(String html, File outputFile) throws HtmlToPdfConversionException {
         return tryToConvert(html, outputFile, Function.identity());
     }
 
@@ -99,7 +103,8 @@ public class WkHtmlToPdfConverter {
      * @see #tryToConvert(String)
      * @see #tryToConvert(String, File)
      */
-    public WritablePDFFile tryToConvert(String html, File outputFile, Function<CommandLine, CommandLine> commandCustomizer) throws HtmlToPdfConversionException {
+    public OnDiskWritablePDF tryToConvert(String html, File outputFile,
+        Function<CommandLine, CommandLine> commandCustomizer) throws HtmlToPdfConversionException {
         synchronized (LOCK) {
             CommandLine command = commandCustomizer.apply(
                     createConversionCommand(outputFile)
@@ -115,14 +120,15 @@ public class WkHtmlToPdfConverter {
                 .addArgument(outputFile.getAbsolutePath());
     }
 
-    protected WritablePDFFile tryToExecuteCommand(CommandLine conversionCommand, String html, File outputFile) throws HtmlToPdfConversionException {
+    protected OnDiskWritablePDF tryToExecuteCommand(CommandLine conversionCommand, String html,
+        File outputFile) throws HtmlToPdfConversionException {
         DefaultExecutor executor = new DefaultExecutor();
 
         Try.withResources(() -> new HtmlPumpStreamHandler(html))
                 .of(htmlStreamHandler -> executeCommand(executor, htmlStreamHandler, conversionCommand))
                 .getOrElseThrow(ex -> new HtmlToPdfConversionException(executor, ex));
 
-        return new WritablePDFFile(outputFile);
+        return new OnDiskWritablePDF(outputFile);
     }
 
     //TODO: Test this

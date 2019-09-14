@@ -1,6 +1,6 @@
 package te.htmltopdf.chrome.domain;
 
-public class ChromePdfOptions {
+public class OptionsForPDF {
 
     private final Boolean landscape;
     private final Boolean displayHeaderFooter;
@@ -20,7 +20,8 @@ public class ChromePdfOptions {
     private final String headerTemplate;
     private final String footerTemplate;
 
-    private ChromePdfOptions(
+    // Uses builder pattern
+    private OptionsForPDF(
             Boolean landscape,
             Boolean displayHeaderFooter,
             Boolean printBackground,
@@ -206,8 +207,8 @@ public class ChromePdfOptions {
             return this;
         }
 
-        public ChromePdfOptions build() {
-            return new ChromePdfOptions(
+        public OptionsForPDF build() {
+            return new OptionsForPDF(
                     landscape,
                     displayHeaderFooter,
                     printBackground,
