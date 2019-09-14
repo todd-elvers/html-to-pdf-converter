@@ -5,6 +5,8 @@ import spock.lang.Subject
 import te.htmltopdf.testHelpers.IntegrationSpecification
 import te.htmltopdf.testHelpers.ResourceFinding
 
+import java.nio.file.Files
+
 class WkHtmlToPdfConverterIntegrationTest extends IntegrationSpecification implements ResourceFinding {
 
     @Subject
@@ -16,7 +18,7 @@ class WkHtmlToPdfConverterIntegrationTest extends IntegrationSpecification imple
     WritablePDF convertToPDF(File testInput) {
         return htmlToPdfConverter.tryToConvert(
                 testInput.text,
-                temporaryFolder.newFile("example.pdf")
+                Files.createTempFile("integration-test-", ".pdf").toFile()
         )
     }
 }

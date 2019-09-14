@@ -1,9 +1,12 @@
 package te.htmltopdf;
 
+import io.vavr.Function0;
 import java.io.File;
+import java.util.function.Function;
 import te.htmltopdf.chrome.ChromePdfFileGenerator;
-import te.htmltopdf.chrome.domain.ChromePdfOptions;
-import te.htmltopdf.chrome.domain.WritablePDFContents;
+import te.htmltopdf.chrome.domain.InMemoryWritablePDF;
+import te.htmltopdf.chrome.domain.OptionsForPDF;
+import te.htmltopdf.chrome.domain.OptionsForPDF.Builder;
 
 public class ChromeHtmlToPdfConverter {
 
@@ -18,8 +21,26 @@ public class ChromeHtmlToPdfConverter {
     }
 
     //TODO: Add a String equivalent of this once the rest of the logic is flushed out
-    public WritablePDFContents tryToConvert(File htmlContents) {
-        ChromePdfOptions options = new ChromePdfOptions.Builder()
+    public InMemoryWritablePDF tryToConvert(File htmlContents) {
+        return tryToConvert(htmlContents, Function.identity());
+    }
+
+
+    // TODO: Declare throws here?
+    // TODO: Test options configurer
+    public InMemoryWritablePDF tryToConvert(
+        File htmlContents,
+        Function<OptionsForPDF.Builder, OptionsForPDF.Builder> customizeWithExtraOptions
+    ) {
+        return Function0.of(this::defaultChromePdfOptions)
+            .andThen(customizeWithExtraOptions)
+            .andThen(Builder::build)
+            .andThen(options -> chromePdfGenerator.generate(htmlContents, options))
+            .get();
+    }
+
+    protected OptionsForPDF.Builder defaultChromePdfOptions() {
+        return new OptionsForPDF.Builder()
             .setDisplayHeaderFooter(true)
             .setPrintBackground(true)
             .setScale(1d)
@@ -29,14 +50,10 @@ public class ChromeHtmlToPdfConverter {
             .setMarginBottom(0.4d)
             .setMarginLeft(0.4d)
             .setMarginRight(0.4d)
-            .setPageRanges("")
+            .setPageRanges(" ")
             .setIgnoreInvalidPageRanges(false)
             .setHeaderTemplate(" ")
             .setFooterTemplate(" ")
-            .setPreferCSSPageSize(false)
-            .build();
-
-        return chromePdfGenerator.generate(options, htmlContents);
+            .setPreferCSSPageSize(false);
     }
-
 }
