@@ -25,3 +25,25 @@ dependencies {
     testCompile 'org.objenesis:objenesis:2.6'
     testCompile 'org.spockframework:spock-core:1.1-groovy-2.4'
 }
+
+test {
+    // Pass in props received on the command line via -D
+    environment System.getProperties()
+
+    testLogging {
+        showExceptions = true
+//        showStandardStreams = true
+        exceptionFormat = 'full'
+    }
+}
+
+integrationTest {
+    // Pass in props received on the command line via -D
+    environment System.getProperties()
+
+    testLogging {
+        showExceptions = true
+//        showStandardStreams = true
+        exceptionFormat = 'full'
+    }
+}
