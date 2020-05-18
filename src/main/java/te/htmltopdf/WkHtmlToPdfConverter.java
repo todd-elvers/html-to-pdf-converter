@@ -26,7 +26,6 @@ import te.htmltopdf.wkhtmltopdf.domain.exceptions.HtmlToPdfConversionException;
  * @see <a href="https://wkhtmltopdf.org/">wkhtmltopdf site</href>
  */
 @ThreadSafe
-@SuppressWarnings("WeakerAccess")
 public class WkHtmlToPdfConverter {
     public static final int COMMAND_TIMEOUT_IN_MILLIS = 15_000;
     public static final String EXPECT_FILE_AS_STREAM_FROM_STD_IN = "-";
