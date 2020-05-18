@@ -6,9 +6,8 @@ is currently out-of-date.  If you'd like a functioning library and can deal with
 
 
 # html-to-pdf-converter
----
 
-A library for converting HTML documents to PDF documents using either [wkhtmltopdf](https://wkhtmltopdf.org/)
+A library for converting HTML documents to PDF documents using either [WkHTMLtoPDF](https://wkhtmltopdf.org/)
 or Chrome DevTools (provided a Chrome instance is available).
 
 <br/>
