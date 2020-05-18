@@ -4,6 +4,7 @@ is currently out-of-date.  If you'd like a functioning library and can deal with
 `WkHTMLtoPDF` support then checkout the version 1.1.0 tag. 
 ********************************
 
+<br/><br/>
 
 # html-to-pdf-converter
 
