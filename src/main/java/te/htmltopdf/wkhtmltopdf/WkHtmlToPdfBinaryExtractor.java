@@ -1,19 +1,18 @@
 package te.htmltopdf.wkhtmltopdf;
 
-import org.apache.commons.io.FileUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.File;
-import java.io.InputStream;
-
 import io.vavr.Function0;
 import io.vavr.Tuple;
 import io.vavr.Tuple3;
 import io.vavr.control.Option;
 import io.vavr.control.Try;
+import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import te.htmltopdf.wkhtmltopdf.domain.exceptions.BinaryClassLoaderException;
 import te.htmltopdf.wkhtmltopdf.domain.exceptions.BinaryExtractionException;
+
+import java.io.File;
+import java.io.InputStream;
 
 import static org.apache.commons.io.FilenameUtils.getExtension;
 import static org.apache.commons.io.FilenameUtils.removeExtension;
@@ -23,11 +22,15 @@ import static org.apache.commons.lang3.SystemUtils.IS_OS_WINDOWS;
 /**
  * Extracts a wkhtmltopdf binary out of this JAR to a temporary directory.
  */
-@SuppressWarnings("WeakerAccess")
 public class WkHtmlToPdfBinaryExtractor {
     private static final Logger log = LoggerFactory.getLogger(WkHtmlToPdfBinaryExtractor.class);
 
     protected final TempFileGenerator tempFileGenerator;
+    protected final Function0<File> extractor = Function0
+            .of(this::prepareForExtraction)
+            .andThen(this::createEmptyTempFile)
+            .andThen(this::openStreamToBinaryInJAR)
+            .andThen(this::streamBinaryContentsToTempFile);
 
     public WkHtmlToPdfBinaryExtractor() {
         this(new TempFileGenerator());
@@ -44,12 +47,7 @@ public class WkHtmlToPdfBinaryExtractor {
      */
     public File extract() {
         log.info("Extracting wkhtmltopdf binary for this OS.");
-
-        return Function0.of(this::prepareForExtraction)
-                .andThen(this::createEmptyTempFile)
-                .andThen(this::openStreamToBinaryInJAR)
-                .andThen(this::streamBinaryContentsToTempFile)
-                .apply();
+        return extractor.apply();
     }
 
     protected Tuple3<String, File, InputStream> prepareForExtraction() {

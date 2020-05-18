@@ -4,7 +4,7 @@ import io.vavr.Function0;
 import java.io.File;
 import java.util.function.Function;
 import te.htmltopdf.chrome.ChromePdfFileGenerator;
-import te.htmltopdf.chrome.domain.InMemoryWritablePDF;
+import te.htmltopdf.chrome.domain.InMemoryPDF;
 import te.htmltopdf.chrome.domain.OptionsForPDF;
 import te.htmltopdf.chrome.domain.OptionsForPDF.Builder;
 
@@ -21,14 +21,14 @@ public class ChromeHtmlToPdfConverter {
     }
 
     //TODO: Add a String equivalent of this once the rest of the logic is flushed out
-    public InMemoryWritablePDF tryToConvert(File htmlContents) {
+    public InMemoryPDF tryToConvert(File htmlContents) {
         return tryToConvert(htmlContents, Function.identity());
     }
 
 
     // TODO: Declare throws here?
     // TODO: Test options configurer
-    public InMemoryWritablePDF tryToConvert(
+    public InMemoryPDF tryToConvert(
         File htmlContents,
         Function<OptionsForPDF.Builder, OptionsForPDF.Builder> customizeWithExtraOptions
     ) {
