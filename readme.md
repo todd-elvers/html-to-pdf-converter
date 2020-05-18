@@ -1,16 +1,17 @@
-html-to-pdf-converter
+********************************
+This library is in the middle of having Chrome support added to it, so the readme
+is currently out-of-date.  If you'd like a functioning library and can deal with only having
+`WkHTMLtoPDF` support then checkout the version 1.1.0 tag. 
+********************************
+
+
+# html-to-pdf-converter
 ---------------------------------
 
 A library for converting HTML documents to PDF documents using either [wkhtmltopdf](https://wkhtmltopdf.org/)
 or Chrome DevTools (provided a Chrome instance is available).
 
 <br/>
-
-********************************
-**Note:** This library is in the middle of having Chrome support added to it, so the readme
-is currently out-of-date.  If you'd like a functioning library and can deal with only having
-`WkHTMLtoPDF` support then checkout the version 1.1.0 tag. 
-********************************
 
 ## How it works
 
