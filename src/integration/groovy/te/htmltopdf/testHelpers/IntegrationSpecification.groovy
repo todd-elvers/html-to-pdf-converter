@@ -13,7 +13,7 @@ abstract class IntegrationSpecification extends Specification implements Resourc
     public static final ArrayList<String> VIEW_OUTPUT_FLAGS = ["showPDFs", "showPDF", "showOutput"]
 
     abstract String getTestFileName()
-    abstract int getExpectedSizeOfPDF()
+    abstract int getMinimumSizeOfPDF()
     abstract OutputStreamWritable convertToPDF(File testInput)
 
     /**
@@ -25,10 +25,10 @@ abstract class IntegrationSpecification extends Specification implements Resourc
      * {@link #VIEW_OUTPUT_FLAGS} to anything (the value does not matter, just as long as the
      * variable/property is present) to trigger this behavior.
      */
-    private static boolean openResultsInBrowser() {
-        return new MultiPropertyReader().containsAnyKeyIgnoringCase(
-                VIEW_OUTPUT_FLAGS
-        )
+    private static boolean shouldOpenResultsInBrowser() {
+        return MultiPropertyReader
+                .forEnvAndSysReading()
+                .containsAnyKeyIgnoringCase(VIEW_OUTPUT_FLAGS)
     }
 
     def "can generate a PDF"() {
@@ -47,14 +47,15 @@ abstract class IntegrationSpecification extends Specification implements Resourc
         then: "nothing went wrong in the process"
             noExceptionThrown()
 
-        and: "the output file is the correct size"
-            FileUtils.sizeOf(tempOutputFile) == getExpectedSizeOfPDF()
-
         and: "if necessary: open the PDF with the system's default PDF viewer"
-            if (openResultsInBrowser()) {
+            if (shouldOpenResultsInBrowser()) {
+                println "OPENING!"
                 Desktop.getDesktop().open(tempOutputFile)
                 Thread.sleep(2_000)     // Give the system a moment so we don't get a 404
             }
+
+        and: "the output file is the correct size"
+            FileUtils.sizeOf(tempOutputFile) > getMinimumSizeOfPDF()
 
         cleanup:
             FileUtils.deleteQuietly(tempOutputFile)

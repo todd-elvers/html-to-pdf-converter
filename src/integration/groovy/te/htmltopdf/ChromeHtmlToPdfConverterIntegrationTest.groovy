@@ -9,7 +9,7 @@ class ChromeHtmlToPdfConverterIntegrationTest extends IntegrationSpecification {
     ChromeHtmlToPdfConverter htmlToPdfConverter = []
 
     final String testFileName = "chrome-test-page.html"
-    final int expectedSizeOfPDF = 66_605
+    final int minimumSizeOfPDF = 30_000
 
     @Override
     OutputStreamWritable convertToPDF(File testInput) {
