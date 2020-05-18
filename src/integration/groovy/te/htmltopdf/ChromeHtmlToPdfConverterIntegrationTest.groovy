@@ -12,7 +12,7 @@ class ChromeHtmlToPdfConverterIntegrationTest extends IntegrationSpecification {
     final int expectedSizeOfPDF = 66_605
 
     @Override
-    WritablePDF convertToPDF(File testInput) {
+    OutputStreamWritable convertToPDF(File testInput) {
         return htmlToPdfConverter.tryToConvert(testInput)
     }
 }

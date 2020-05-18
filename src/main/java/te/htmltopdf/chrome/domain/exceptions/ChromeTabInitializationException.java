@@ -1,7 +1,5 @@
 package te.htmltopdf.chrome.domain.exceptions;
 
-import java.io.IOException;
-
 public class ChromeTabInitializationException extends RuntimeException {
 
     public ChromeTabInitializationException(Throwable cause) {

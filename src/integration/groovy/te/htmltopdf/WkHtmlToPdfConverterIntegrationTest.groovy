@@ -12,7 +12,7 @@ class WkHtmlToPdfConverterIntegrationTest extends IntegrationSpecification {
     final int expectedSizeOfPDF = 99_015
 
     @Override
-    WritablePDF convertToPDF(File testInput) {
+    OutputStreamWritable convertToPDF(File testInput) {
         return htmlToPdfConverter.tryToConvert(testInput.text)
     }
 }

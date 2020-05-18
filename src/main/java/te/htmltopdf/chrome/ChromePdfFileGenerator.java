@@ -8,7 +8,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import te.htmltopdf.chrome.domain.InMemoryWritablePDF;
+import te.htmltopdf.chrome.domain.InMemoryPDF;
 import te.htmltopdf.chrome.domain.OptionsForPDF;
 
 public class ChromePdfFileGenerator {
@@ -25,14 +25,14 @@ public class ChromePdfFileGenerator {
         this.chromeServiceWrapper = chromeServiceWrapper;
     }
 
-    public InMemoryWritablePDF generate(File htmlFile, OptionsForPDF options) {
+    public InMemoryPDF generate(File htmlFile, OptionsForPDF options) {
         log.debug("Connecting to Chrome process.");
 
         String pdfContents = chromeServiceWrapper.doInChromeTab((chromeTab, chromeDevTools) ->
             blockingCallToGeneratePDF(chromeDevTools, htmlFile, options)
         );
 
-        return new InMemoryWritablePDF(pdfContents);
+        return new InMemoryPDF(pdfContents);
     }
 
     protected String blockingCallToGeneratePDF(

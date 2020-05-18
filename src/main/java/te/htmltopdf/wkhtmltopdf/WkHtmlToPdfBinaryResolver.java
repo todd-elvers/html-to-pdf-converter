@@ -61,16 +61,15 @@ public class WkHtmlToPdfBinaryResolver {
                 .peek(customPath -> log.info("Custom binary path found @ {}", customPath));
     }
 
-    protected File makeExecutable(File binary) {
+    protected File makeExecutable(File binary) throws MakingFileExecutableException {
         if (!Files.isExecutable(binary.toPath())) {
-            boolean isExecutableNow = Try.of(() -> binary.setExecutable(true))
+            boolean isExecutableNow = Try
+                    .of(() -> binary.setExecutable(true))
                     .getOrElseThrow(securityException ->
                             new MakingFileExecutableException(binary, securityException)
                     );
 
-            if (!isExecutableNow) {
-                throw new MakingFileExecutableException(binary);
-            }
+            if (!isExecutableNow) throw new MakingFileExecutableException(binary);
         }
 
         return binary;

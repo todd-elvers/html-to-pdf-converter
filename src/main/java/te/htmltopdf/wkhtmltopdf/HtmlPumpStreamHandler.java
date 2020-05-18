@@ -1,5 +1,6 @@
 package te.htmltopdf.wkhtmltopdf;
 
+import io.vavr.control.Try;
 import org.apache.commons.exec.PumpStreamHandler;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -9,8 +10,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 
-import io.vavr.control.Try;
-
 import static java.nio.charset.Charset.defaultCharset;
 
 /**
@@ -19,8 +18,8 @@ import static java.nio.charset.Charset.defaultCharset;
 public class HtmlPumpStreamHandler extends PumpStreamHandler implements Closeable {
     private static final Logger log = LoggerFactory.getLogger(HtmlPumpStreamHandler.class);
 
-    private ByteArrayOutputStream streamOfOutputTextFromBinary;
-    private ByteArrayInputStream streamOfHtmlInFromMemory;
+    private final ByteArrayOutputStream streamOfOutputTextFromBinary;
+    private final ByteArrayInputStream streamOfHtmlInFromMemory;
 
     /**
      * Creates a HtmlStreamHandler capable of streaming HTML in from memory so that it can be piped to the wkhtmltopdf binary

@@ -6,7 +6,7 @@ import java.io.OutputStream;
 /**
  * Represents a PDF that can be written to an {@link OutputStream}.
  */
-public interface WritablePDF {
+public interface OutputStreamWritable {
 
     void write(OutputStream outputStream) throws IOException;
 

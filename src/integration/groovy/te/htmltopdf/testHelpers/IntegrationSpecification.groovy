@@ -3,7 +3,7 @@ package te.htmltopdf.testHelpers
 import org.apache.commons.io.FileUtils
 import spock.lang.Specification
 import te.core.env.MultiPropertyReader
-import te.htmltopdf.WritablePDF
+import te.htmltopdf.OutputStreamWritable
 
 import java.awt.*
 import java.nio.file.Files
@@ -14,7 +14,7 @@ abstract class IntegrationSpecification extends Specification implements Resourc
 
     abstract String getTestFileName()
     abstract int getExpectedSizeOfPDF()
-    abstract WritablePDF convertToPDF(File testInput)
+    abstract OutputStreamWritable convertToPDF(File testInput)
 
     /**
      * Useful for manually verifying the contents of PDFs generated during integration tests.
@@ -36,7 +36,7 @@ abstract class IntegrationSpecification extends Specification implements Resourc
             File inputFile = findResourceFile(getTestFileName())
 
         when: "we convert the HTML contents of said page to PDF"
-            WritablePDF writablePDF = convertToPDF(inputFile)
+            OutputStreamWritable writablePDF = convertToPDF(inputFile)
 
         and: "write said PDF to a temporary file"
             File tempOutputFile = Files.createTempFile("temp-file-result", ".pdf").toFile()

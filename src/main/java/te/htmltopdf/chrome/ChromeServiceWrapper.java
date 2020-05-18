@@ -7,7 +7,9 @@ import com.github.kklisura.cdt.services.exceptions.ChromeServiceException;
 import com.github.kklisura.cdt.services.types.ChromeTab;
 import io.vavr.Lazy;
 import io.vavr.control.Try;
+
 import java.util.function.BiFunction;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import te.htmltopdf.chrome.domain.exceptions.ChromeTabExecutionException;
@@ -17,8 +19,8 @@ public class ChromeServiceWrapper {
 
     private static final Logger log = LoggerFactory.getLogger(ChromeServiceWrapper.class);
 
-    private Lazy<ChromeLauncher> chromeLauncher = Lazy.of(ChromeLauncher::new);
-    private Lazy<ChromeService> chromeService = Lazy.of(() -> chromeLauncher.get().launch(true));
+    private final Lazy<ChromeLauncher> chromeLauncher = Lazy.of(ChromeLauncher::new);
+    private final Lazy<ChromeService> chromeService = Lazy.of(() -> chromeLauncher.get().launch(true));
 
     //TODO: Could use a better name now that the return type is String
     public String doInChromeTab(BiFunction<ChromeTab, ChromeDevToolsService, String> chromeTabCallback) {
@@ -26,9 +28,9 @@ public class ChromeServiceWrapper {
         ChromeDevToolsService devTools = createDevToolsService(tab);
 
         return Try.of(() -> chromeTabCallback.apply(tab, devTools))
-            .andThen(() -> closeTab(tab, devTools))
-            .onFailure(throwable -> log.error(ChromeTabExecutionException.MESSAGE, throwable))
-            .getOrElseThrow(ChromeTabExecutionException::new);
+                .andThen(() -> closeTab(tab, devTools))
+                .onFailure(throwable -> log.error(ChromeTabExecutionException.MESSAGE, throwable))
+                .getOrElseThrow(ChromeTabExecutionException::new);
     }
 
     /**
@@ -41,26 +43,26 @@ public class ChromeServiceWrapper {
     public void closeTab(ChromeTab tab, ChromeDevToolsService devToolsService) {
         if (devToolsService != null) {
             Try.run(devToolsService::close)
-                .andThen(devToolsService::waitUntilClosed)
-                .get();
+                    .andThen(devToolsService::waitUntilClosed)
+                    .get();
         }
 
         if (tab != null) {
             Try.run(() -> chromeService.get().closeTab(tab))
-                .get();
+                    .get();
         }
     }
 
     public ChromeTab createChromeTab() {
         return Try.of(() -> chromeService.get().createTab())
-            .onSuccess(tab -> log.debug("Chrome tab initialized."))
-            .getOrElseThrow(ChromeTabInitializationException::new);
+                .onSuccess(tab -> log.debug("Chrome tab initialized."))
+                .getOrElseThrow(ChromeTabInitializationException::new);
     }
 
     public ChromeDevToolsService createDevToolsService(ChromeTab tab) throws ChromeServiceException {
         return Try.of(() -> chromeService.get().createDevToolsService(tab))
-            .onSuccess(devTools -> log.debug("Chrome DevTools initialized."))
-            .onFailure(ex -> closeTab(tab, null))
-            .getOrElseThrow(ChromeTabInitializationException::new);
+                .onSuccess(devTools -> log.debug("Chrome DevTools initialized."))
+                .onFailure(ex -> closeTab(tab, null))
+                .getOrElseThrow(ChromeTabInitializationException::new);
     }
 }

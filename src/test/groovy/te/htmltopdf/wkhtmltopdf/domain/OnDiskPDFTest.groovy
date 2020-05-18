@@ -5,7 +5,7 @@ import org.junit.rules.TemporaryFolder
 import spock.lang.Shared
 import spock.lang.Specification
 
-class OnDiskWritablePDFTest extends Specification {
+class OnDiskPDFTest extends Specification {
 
     @Rule
     TemporaryFolder temporaryFolder = new TemporaryFolder()
@@ -15,7 +15,7 @@ class OnDiskWritablePDFTest extends Specification {
 
     def "can write the underlying PDF to any output stream"() {
         given:
-            OnDiskWritablePDF pdfFile = new OnDiskWritablePDF(newPDF())
+            OnDiskPDF pdfFile = new OnDiskPDF(newPDF())
             File newFile = temporaryFolder.newFile()
 
         when:
@@ -30,7 +30,7 @@ class OnDiskWritablePDFTest extends Specification {
 
     def "can return a reference to the underlying PDF"() {
         when:
-            OnDiskWritablePDF pdfFile = new OnDiskWritablePDF(newPDF())
+            OnDiskPDF pdfFile = new OnDiskPDF(newPDF())
 
         then:
             pdfFile.temporaryFile.exists()
@@ -39,7 +39,7 @@ class OnDiskWritablePDFTest extends Specification {
 
     def "calling close() deletes the underlying PDF"() {
         when:
-            OnDiskWritablePDF pdfFile = new OnDiskWritablePDF(newPDF())
+            OnDiskPDF pdfFile = new OnDiskPDF(newPDF())
 
         then:
             pdfFile.temporaryFile.exists()
