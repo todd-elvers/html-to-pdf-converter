@@ -18,16 +18,15 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
  *
  * <p>The OS-specific binary for your operating system will be lazily cached to a temporary file
  * upon the first call to {@link #resolve()}.  All subsequent calls will utilize the cached binary.
- *
+ * <p>
  * <br/>
  *
  * <p>To disable the caching process stated above simply set the environment variable (or system
  * property) <code>WKHTMLTOPDF_BINARY</code> to the path of the WkHTMLtoPDF binary on your system.
  */
 public class WkHtmlToPdfBinaryResolver {
-    private static final Logger log = LoggerFactory.getLogger(WkHtmlToPdfBinaryResolver.class);
     public static final String BINARY_ENV_VAR_NAME = "WKHTMLTOPDF_BINARY";
-
+    private static final Logger log = LoggerFactory.getLogger(WkHtmlToPdfBinaryResolver.class);
     protected final WkHtmlToPdfBinaryExtractor binaryExtractor;
 
     public WkHtmlToPdfBinaryResolver() {

@@ -3,26 +3,21 @@ package te.htmltopdf.chrome;
 import io.vavr.Function0;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.checkerframework.checker.units.qual.C;
 import te.htmltopdf.ToPdfConverter;
 import te.htmltopdf.chrome.domain.InMemoryPDF;
 import te.htmltopdf.chrome.domain.OptionsForPDF;
 import te.htmltopdf.wkhtmltopdf.TempFileGenerator;
-import te.htmltopdf.wkhtmltopdf.domain.OnDiskPDF;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
-import java.nio.file.Files;
 import java.util.function.Function;
 
-public class ChromeHtmlToPdfConverter  implements ToPdfConverter<InMemoryPDF> {
-
-    private final ChromePdfFileGenerator chromePdfGenerator;
+public class ChromeHtmlToPdfConverter implements ToPdfConverter<InMemoryPDF> {
     protected final TempFileGenerator tempFileGenerator = new TempFileGenerator();
     protected final Charset charset;
+    private final ChromePdfFileGenerator chromePdfGenerator;
 
     public ChromeHtmlToPdfConverter() {
         this.charset = Charset.defaultCharset();

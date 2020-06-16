@@ -1,8 +1,8 @@
 package te.htmltopdf.chrome.domain;
 
 import io.vavr.control.Try;
-import te.htmltopdf.chrome.ChromeHtmlToPdfConverter;
 import te.htmltopdf.OutputStreamWritable;
+import te.htmltopdf.chrome.ChromeHtmlToPdfConverter;
 
 import java.io.OutputStream;
 import java.util.Base64;

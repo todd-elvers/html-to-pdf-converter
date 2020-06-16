@@ -14,7 +14,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class ChromePdfFileGenerator {
-
     private static final Logger log = LoggerFactory.getLogger(ChromePdfFileGenerator.class);
     private static final int TIMEOUT_SECONDS = 10;
 

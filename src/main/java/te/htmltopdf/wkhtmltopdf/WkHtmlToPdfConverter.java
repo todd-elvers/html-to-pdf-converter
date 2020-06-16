@@ -1,26 +1,20 @@
 package te.htmltopdf.wkhtmltopdf;
 
 import io.vavr.control.Try;
+import net.jcip.annotations.GuardedBy;
+import net.jcip.annotations.ThreadSafe;
+import org.apache.commons.exec.*;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import te.htmltopdf.ToPdfConverter;
+import te.htmltopdf.wkhtmltopdf.domain.OnDiskPDF;
+import te.htmltopdf.wkhtmltopdf.domain.exceptions.HtmlToPdfConversionException;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.function.Function;
-import java.util.stream.Collectors;
-
-import net.jcip.annotations.GuardedBy;
-import net.jcip.annotations.ThreadSafe;
-import org.apache.commons.exec.CommandLine;
-import org.apache.commons.exec.DefaultExecutor;
-import org.apache.commons.exec.ExecuteWatchdog;
-import org.apache.commons.exec.Executor;
-import org.apache.commons.exec.PumpStreamHandler;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
-import te.htmltopdf.ToPdfConverter;
-import te.htmltopdf.wkhtmltopdf.domain.OnDiskPDF;
-import te.htmltopdf.wkhtmltopdf.domain.exceptions.HtmlToPdfConversionException;
 
 /**
  * Converts HTML documents to PDF documents.

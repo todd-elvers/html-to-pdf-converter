@@ -7,16 +7,14 @@ import com.github.kklisura.cdt.services.exceptions.ChromeServiceException;
 import com.github.kklisura.cdt.services.types.ChromeTab;
 import io.vavr.Lazy;
 import io.vavr.control.Try;
-
-import java.util.function.BiFunction;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import te.htmltopdf.chrome.domain.exceptions.ChromeTabExecutionException;
 import te.htmltopdf.chrome.domain.exceptions.ChromeTabInitializationException;
 
-public class ChromeServiceWrapper {
+import java.util.function.BiFunction;
 
+public class ChromeServiceWrapper {
     private static final Logger log = LoggerFactory.getLogger(ChromeServiceWrapper.class);
 
     private final Lazy<ChromeLauncher> chromeLauncher = Lazy.of(ChromeLauncher::new);

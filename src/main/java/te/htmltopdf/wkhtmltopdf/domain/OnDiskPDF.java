@@ -1,18 +1,18 @@
 package te.htmltopdf.wkhtmltopdf.domain;
 
 import io.vavr.control.Try;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import te.htmltopdf.OutputStreamWritable;
+import te.htmltopdf.wkhtmltopdf.WkHtmlToPdfConverter;
+
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import te.htmltopdf.wkhtmltopdf.WkHtmlToPdfConverter;
-import te.htmltopdf.OutputStreamWritable;
 
 /**
  * Represents a PDF file on disk that can be written to an {@link OutputStream}.  These are returned
@@ -38,8 +38,8 @@ public class OnDiskPDF implements OutputStreamWritable, Closeable {
      */
     public void write(OutputStream outputStream) {
         Try.withResources(() -> FileUtils.openInputStream(temporaryFile))
-            .of(inputStream -> IOUtils.copy(inputStream, outputStream))
-            .get();
+                .of(inputStream -> IOUtils.copy(inputStream, outputStream))
+                .get();
     }
 
     public File getTemporaryFile() {
