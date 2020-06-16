@@ -1,5 +1,8 @@
 package te.htmltopdf.chrome.domain;
 
+/**
+ * The options Chrome accepts for printing.
+ */
 public class OptionsForPDF {
 
     private final Boolean landscape;
@@ -132,6 +135,32 @@ public class OptionsForPDF {
         private String headerTemplate;
         private String footerTemplate;
 
+        /**
+         * Creates a new {@link Builder} instance from an existing instance, copying
+         * all properties along the way.
+         *
+         * @param builder the {@link Builder} instance to copy
+         * @return the copy of the {@link Builder} instance
+         */
+        public static Builder fromBuilder(Builder builder) {
+            return new Builder()
+                    .setLandscape(builder.landscape)
+                    .setDisplayHeaderFooter(builder.displayHeaderFooter)
+                    .setPrintBackground(builder.printBackground)
+                    .setIgnoreInvalidPageRanges(builder.ignoreInvalidPageRanges)
+                    .setPreferCSSPageSize(builder.preferCSSPageSize)
+                    .setScale(builder.scale)
+                    .setPaperWidth(builder.paperWidth)
+                    .setPaperHeight(builder.paperHeight)
+                    .setMarginTop(builder.marginTop)
+                    .setMarginBottom(builder.marginBottom)
+                    .setMarginLeft(builder.marginLeft)
+                    .setMarginRight(builder.marginRight)
+                    .setPageRanges(builder.pageRanges)
+                    .setHeaderTemplate(builder.headerTemplate)
+                    .setFooterTemplate(builder.footerTemplate);
+        }
+
         public Builder setLandscape(Boolean landscape) {
             this.landscape = landscape;
             return this;
@@ -207,6 +236,10 @@ public class OptionsForPDF {
             return this;
         }
 
+        /**
+         * @return an immutable {@link OptionsForPDF} instance with all the properties that
+         * were set on the {@link Builder} instance.
+         */
         public OptionsForPDF build() {
             return new OptionsForPDF(
                     landscape,

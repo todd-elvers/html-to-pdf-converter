@@ -49,9 +49,8 @@ abstract class IntegrationSpecification extends Specification implements Resourc
 
         and: "if necessary: open the PDF with the system's default PDF viewer"
             if (shouldOpenResultsInBrowser()) {
-                println "OPENING!"
                 Desktop.getDesktop().open(tempOutputFile)
-                Thread.sleep(2_000)     // Give the system a moment so we don't get a 404
+                Thread.sleep(3_000)     // Give the system a moment so we don't get a 404
             }
 
         and: "the output file is the correct size"

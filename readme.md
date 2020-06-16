@@ -8,17 +8,27 @@ is currently out-of-date.  If you'd like a functioning library and can deal with
 
 # html-to-pdf-converter
 
-A library for converting HTML documents to PDF documents using either [WkHTMLtoPDF](https://wkhtmltopdf.org/)
-or Chrome DevTools (provided a Chrome instance is available).
+A library for converting HTML documents to PDF documents with support for either Chrome DevTools
+or [WkHTMLtoPDF](https://wkhtmltopdf.org/).
 
 <br/>
-
-## How it works
 
 ### Using Chrome
 
 This library wraps and simplifies usage of the [chrome-devtools-java-client](https://github.com/kklisura/chrome-devtools-java-client)
-library so interacting with a running Chrome instance is safe and easy.
+library so interacting with a running Chrome instance is safe and easy.  Provided that ......., a valid request
+to your running Chrome instance might look like the following:
+```java
+ChromeHtmlToPdfConverter converter = ...
+String html = ...
+File outputFile = ...
+
+try (InMemoryPDF pdf = converter.tryToConvert(html)) {
+    try(OutputStream out = Files.newOutputStream(outputFile.toPath())) {
+        pdf.write(out);
+    }   
+}
+```
 
 TODO: More documentation here
 
@@ -31,7 +41,7 @@ and will likely break if the page being converted is using newer technologies (e
 
 <br/>
 
-This library uses a binary of [wkhtmltopdf](https://wkhtmltopdf.org/), Apache Exec, and synchronization for a robust, thread-safe HTML to PDF conversion process.
+This library uses a binary of [WkHTMLtoPDF](https://wkhtmltopdf.org/), Apache Exec, and synchronization for a robust, thread-safe HTML to PDF conversion process.
 
 It includes the binaries for Windows, Mac & Linux and will decide which to use based on the current operating system.  
 Optionally you can provide your own [wkhtmltopdf](https://wkhtmltopdf.org/) binary by setting the `WKHTMLTOPDF_BINARY` environment variable.
@@ -84,16 +94,3 @@ try {
 ```
 
 <br/>
-
-## Things to know
-
-#### PDF Generation
-
-* `HtmlToPdfFileConverter`
-    * Instantiating this class causes a wkhtmltopdf binary to be extracted from the JAR to the system's temp. directory.
-        * To disable this behavior and use your own `wkhtmltopdf` binary simply create the environment variable `WKHTMLTOPDF_BINARY` and point it to your binary 
-    * `tryToConvert(html)` should be used if the PDF being generated has a short-lived purpose (e.g. delivering dynamic PDFs from a webservice)
-        * Generates a PDF file and writes it to the system's temp. directory which can then be streamed to a destination
-    * `tryToConvert(html, outputFile)` should be used for all other PDF generation
-        * Generates a PDF file and writes it to `outputFile`
-    * If either of the two methods above fail, a `HtmlToPdfConversionException` is thrown which will contain the output text from the command line for easier troubleshooting. 

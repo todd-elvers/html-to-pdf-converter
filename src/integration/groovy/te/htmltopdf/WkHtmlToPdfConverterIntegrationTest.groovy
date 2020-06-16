@@ -2,6 +2,7 @@ package te.htmltopdf
 
 import spock.lang.Subject
 import te.htmltopdf.testHelpers.IntegrationSpecification
+import te.htmltopdf.wkhtmltopdf.WkHtmlToPdfConverter
 
 class WkHtmlToPdfConverterIntegrationTest extends IntegrationSpecification {
 

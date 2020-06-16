@@ -10,14 +10,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import te.htmltopdf.wkhtmltopdf.domain.exceptions.BinaryClassLoaderException;
 import te.htmltopdf.wkhtmltopdf.domain.exceptions.BinaryExtractionException;
+import te.htmltopdf.wkhtmltopdf.domain.exceptions.UnsupportedOperatingSystemException;
 
 import java.io.File;
 import java.io.InputStream;
 
 import static org.apache.commons.io.FilenameUtils.getExtension;
 import static org.apache.commons.io.FilenameUtils.removeExtension;
-import static org.apache.commons.lang3.SystemUtils.IS_OS_MAC;
-import static org.apache.commons.lang3.SystemUtils.IS_OS_WINDOWS;
+import static org.apache.commons.lang3.SystemUtils.*;
 
 /**
  * Extracts a wkhtmltopdf binary out of this JAR to a temporary directory.
@@ -26,11 +26,6 @@ public class WkHtmlToPdfBinaryExtractor {
     private static final Logger log = LoggerFactory.getLogger(WkHtmlToPdfBinaryExtractor.class);
 
     protected final TempFileGenerator tempFileGenerator;
-    protected final Function0<File> extractor = Function0
-            .of(this::prepareForExtraction)
-            .andThen(this::createEmptyTempFile)
-            .andThen(this::openStreamToBinaryInJAR)
-            .andThen(this::streamBinaryContentsToTempFile);
 
     public WkHtmlToPdfBinaryExtractor() {
         this(new TempFileGenerator());
@@ -47,23 +42,29 @@ public class WkHtmlToPdfBinaryExtractor {
      */
     public File extract() {
         log.info("Extracting wkhtmltopdf binary for this OS.");
-        return extractor.apply();
+        return Function0
+                .of(this::prepareForExtraction)
+                .andThen(this::createEmptyTempFile)
+                .andThen(this::openStreamToBinaryInJAR)
+                .andThen(this::streamBinaryContentsToTempFile)
+                .apply();
     }
 
     protected Tuple3<String, File, InputStream> prepareForExtraction() {
         return Tuple.of(determineBinaryFilename(), null, null);
     }
 
-    //TODO: Add validation to this, we want to eagerly fail when the current OS is not supported
     protected String determineBinaryFilename() {
         if (IS_OS_MAC) return "wkhtmltopdf_mac";
         if (IS_OS_WINDOWS) return "wkhtmltopdf_win.exe";
-        return "wkhtmltopdf_linux";
+        if (IS_OS_LINUX) return "wkhtmltopdf_linux";
+
+        throw new UnsupportedOperatingSystemException();
     }
 
     protected Tuple3<String, File, InputStream> createEmptyTempFile(Tuple3<String, File, InputStream> extraction) {
         return extraction.update2(
-                tempFileGenerator.generateTempBinaryFile(removeExtension(extraction._1), getExtension(extraction._1))
+                tempFileGenerator.generateTempForExecutable(removeExtension(extraction._1), getExtension(extraction._1))
         );
     }
 

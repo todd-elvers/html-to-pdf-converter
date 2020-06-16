@@ -8,7 +8,7 @@ public class TempFileCreationException extends RuntimeException {
         super(message, throwable);
     }
 
-    public static TempFileCreationException forBinaryExtraction(Throwable throwable) {
+    public static TempFileCreationException forExecutable(Throwable throwable) {
         return new TempFileCreationException(
                 "Failed to create a temporary file to extract the wkhtmltopdf binary to.\n" +
                         messageSuffix(),
@@ -16,7 +16,7 @@ public class TempFileCreationException extends RuntimeException {
         );
     }
 
-    public static TempFileCreationException forOutputFile(Throwable throwable) {
+    public static TempFileCreationException forPDF(Throwable throwable) {
         return new TempFileCreationException(
                 "Failed to create a temporary file to write the resulting PDF to.\n" +
                         messageSuffix(),

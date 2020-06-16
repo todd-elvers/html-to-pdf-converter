@@ -11,12 +11,12 @@ import java.util.function.Function;
  */
 public class TempFileGenerator {
 
-    public File generateTempOutputFile() throws TempFileCreationException {
-        return generate("pdf-temp-", "pdf", TempFileCreationException::forBinaryExtraction);
+    public File generateTempForPDF() throws TempFileCreationException {
+        return generate("pdf-temp-", "pdf", TempFileCreationException::forPDF);
     }
 
-    public File generateTempBinaryFile(String prefix, String suffix) throws TempFileCreationException {
-        return generate(prefix, suffix, TempFileCreationException::forOutputFile);
+    public File generateTempForExecutable(String prefix, String suffix) throws TempFileCreationException {
+        return generate(prefix, suffix, TempFileCreationException::forExecutable);
     }
 
     protected File generate(

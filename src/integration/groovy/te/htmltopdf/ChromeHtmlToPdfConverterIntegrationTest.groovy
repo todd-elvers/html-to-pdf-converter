@@ -1,6 +1,7 @@
 package te.htmltopdf
 
 import spock.lang.Subject
+import te.htmltopdf.chrome.ChromeHtmlToPdfConverter
 import te.htmltopdf.testHelpers.IntegrationSpecification
 
 class ChromeHtmlToPdfConverterIntegrationTest extends IntegrationSpecification {

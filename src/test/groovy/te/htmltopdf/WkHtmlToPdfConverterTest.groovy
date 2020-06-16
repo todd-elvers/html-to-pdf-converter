@@ -4,6 +4,7 @@ import groovy.transform.InheritConstructors
 import org.apache.commons.exec.CommandLine
 import spock.lang.Specification
 import spock.lang.Subject
+import te.htmltopdf.wkhtmltopdf.WkHtmlToPdfConverter
 import te.htmltopdf.wkhtmltopdf.domain.exceptions.HtmlToPdfConversionException
 
 class WkHtmlToPdfConverterTest extends Specification {
