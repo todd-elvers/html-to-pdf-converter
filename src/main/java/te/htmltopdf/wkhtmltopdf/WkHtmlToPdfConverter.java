@@ -37,7 +37,10 @@ public class WkHtmlToPdfConverter implements ToPdfConverter<OnDiskPDF> {
     private static final Object LOCK = new Object[0];
 
     // v2.0.0 features list:
+    //TODO: Get tests for newest conversion features passing
     //TODO: Check response code from wkhtmltopdf and output error message from console
+    //TODO: Correct documentation on existing methods
+    //TODO: Add documentation to new methods
 
     @GuardedBy("WkHtmlToPdfConverter$LOCK")
     protected final File wkHtmlToPdfBinary;
