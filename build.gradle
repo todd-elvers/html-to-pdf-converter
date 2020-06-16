@@ -21,7 +21,7 @@ dependencies {
     // For interacting with Chrome to convert HTML documents to PDF documents
     api 'com.github.kklisura.cdt:cdt-java-client:1.3.3'
 
-    // Testing log implementation
+    // Log implementation for tests
     testImplementation 'ch.qos.logback:logback-classic:1.2.3'
 
     // Spock testing framework
