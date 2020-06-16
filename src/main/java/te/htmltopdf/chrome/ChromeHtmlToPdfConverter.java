@@ -32,11 +32,13 @@ public class ChromeHtmlToPdfConverter {
         this.chromePdfGenerator = chromePdfGenerator;
     }
 
+    // TODO: Add test for this
     public InMemoryPDF tryToConvert(InputStream inputStream) throws IOException {
         String html = IOUtils.toString(inputStream, charset);
         return tryToConvert(html);
     }
 
+    // TODO: Add test for this
     public InMemoryPDF tryToConvert(String html) throws IOException {
         File tempFile = tempFileGenerator.generateTempForPDF();
 

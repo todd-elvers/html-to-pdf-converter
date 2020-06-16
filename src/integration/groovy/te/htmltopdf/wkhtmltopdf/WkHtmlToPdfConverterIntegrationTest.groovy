@@ -1,10 +1,11 @@
-package te.htmltopdf
+package te.htmltopdf.wkhtmltopdf
 
 import spock.lang.Subject
+import te.htmltopdf.OutputStreamWritable
 import te.htmltopdf.testHelpers.IntegrationSpecification
 import te.htmltopdf.wkhtmltopdf.WkHtmlToPdfConverter
 
-class WkHtmlToPdfConverterIntegrationTest extends IntegrationSpecification {
+abstract class WkHtmlToPdfConverterIntegrationTest extends IntegrationSpecification {
 
     @Subject
     WkHtmlToPdfConverter htmlToPdfConverter = []
@@ -12,8 +13,4 @@ class WkHtmlToPdfConverterIntegrationTest extends IntegrationSpecification {
     final String testFileName = "wkhtmltopdf-test-page.htm"
     final int minimumSizeOfPDF = 99_000
 
-    @Override
-    OutputStreamWritable convertToPDF(File testInput) {
-        return htmlToPdfConverter.tryToConvert(testInput.text)
-    }
 }
