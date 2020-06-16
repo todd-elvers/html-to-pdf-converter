@@ -18,6 +18,7 @@ import org.apache.commons.exec.Executor;
 import org.apache.commons.exec.PumpStreamHandler;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import te.htmltopdf.ToPdfConverter;
 import te.htmltopdf.wkhtmltopdf.domain.OnDiskPDF;
 import te.htmltopdf.wkhtmltopdf.domain.exceptions.HtmlToPdfConversionException;
 
@@ -30,7 +31,7 @@ import te.htmltopdf.wkhtmltopdf.domain.exceptions.HtmlToPdfConversionException;
  * @see <a href="https://wkhtmltopdf.org/">WkHTMLtoPDF site</href>
  */
 @ThreadSafe
-public class WkHtmlToPdfConverter {
+public class WkHtmlToPdfConverter implements ToPdfConverter<OnDiskPDF> {
     public static final int COMMAND_TIMEOUT_IN_MILLIS = 15_000;
     public static final String EXPECT_FILE_AS_STREAM_FROM_STD_IN = "-";
     private static final Object LOCK = new Object[0];
@@ -53,7 +54,6 @@ public class WkHtmlToPdfConverter {
         this.tempFileGenerator = tempFileGenerator;
     }
 
-    // TODO: Add test for this
     public OnDiskPDF tryToConvert(File file) throws IOException {
         return tryToConvert(
                 FileUtils.readFileToString(file, charset),
@@ -61,7 +61,6 @@ public class WkHtmlToPdfConverter {
         );
     }
 
-    // TODO: Add test for this
     public OnDiskPDF tryToConvert(InputStream inputStream) throws IOException {
         return tryToConvert(
                 String.join("\n", IOUtils.readLines(inputStream, charset)),

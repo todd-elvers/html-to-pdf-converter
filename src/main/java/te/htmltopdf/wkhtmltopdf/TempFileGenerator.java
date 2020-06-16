@@ -6,9 +6,6 @@ import te.htmltopdf.wkhtmltopdf.domain.exceptions.TempFileCreationException;
 import java.io.File;
 import java.util.function.Function;
 
-/**
- * Responsible for generating temporary files in the temporary directory.
- */
 public class TempFileGenerator {
 
     public File generateTempForPDF() throws TempFileCreationException {

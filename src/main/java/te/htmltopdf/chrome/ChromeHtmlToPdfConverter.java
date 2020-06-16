@@ -4,9 +4,11 @@ import io.vavr.Function0;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.checkerframework.checker.units.qual.C;
+import te.htmltopdf.ToPdfConverter;
 import te.htmltopdf.chrome.domain.InMemoryPDF;
 import te.htmltopdf.chrome.domain.OptionsForPDF;
 import te.htmltopdf.wkhtmltopdf.TempFileGenerator;
+import te.htmltopdf.wkhtmltopdf.domain.OnDiskPDF;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -16,7 +18,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.function.Function;
 
-public class ChromeHtmlToPdfConverter {
+public class ChromeHtmlToPdfConverter  implements ToPdfConverter<InMemoryPDF> {
 
     private final ChromePdfFileGenerator chromePdfGenerator;
     protected final TempFileGenerator tempFileGenerator = new TempFileGenerator();
@@ -32,13 +34,11 @@ public class ChromeHtmlToPdfConverter {
         this.chromePdfGenerator = chromePdfGenerator;
     }
 
-    // TODO: Add test for this
     public InMemoryPDF tryToConvert(InputStream inputStream) throws IOException {
         String html = IOUtils.toString(inputStream, charset);
         return tryToConvert(html);
     }
 
-    // TODO: Add test for this
     public InMemoryPDF tryToConvert(String html) throws IOException {
         File tempFile = tempFileGenerator.generateTempForPDF();
 

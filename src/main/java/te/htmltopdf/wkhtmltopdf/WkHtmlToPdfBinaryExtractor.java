@@ -20,7 +20,7 @@ import static org.apache.commons.io.FilenameUtils.removeExtension;
 import static org.apache.commons.lang3.SystemUtils.*;
 
 /**
- * Extracts a wkhtmltopdf binary out of this JAR to a temporary directory.
+ * Extracts a WkHTMLtoPDF binary out of this JAR to a temporary directory.
  */
 public class WkHtmlToPdfBinaryExtractor {
     private static final Logger log = LoggerFactory.getLogger(WkHtmlToPdfBinaryExtractor.class);
@@ -36,12 +36,12 @@ public class WkHtmlToPdfBinaryExtractor {
     }
 
     /**
-     * Extracts the OS-specific wkhtmltopdf binary from our JAR and streams it to a temporary file.
+     * Extracts the OS-specific WkHTMLtoPDF binary from our JAR and streams it to a temporary file.
      *
-     * @return a reference to the OS-specific wkhtmltopdf binary on disk
+     * @return a reference to the OS-specific WkHTMLtoPDF binary on disk
      */
     public File extract() {
-        log.info("Extracting wkhtmltopdf binary for this OS.");
+        log.info("Extracting WkHTMLtoPDF binary for this OS.");
         return Function0
                 .of(this::prepareForExtraction)
                 .andThen(this::createEmptyTempFile)
