@@ -9,6 +9,8 @@ import java.io.InputStream;
  * the form of an {@link OutputStreamWritable} instance.
  *
  * @param <T> the type this PDF converter generates
+ * @see te.htmltopdf.chrome.ChromeHtmlToPdfConverter
+ * @see te.htmltopdf.wkhtmltopdf.WkHtmlToPdfConverter
  */
 public interface ToPdfConverter<T extends OutputStreamWritable> {
     T tryToConvert(String html) throws IOException;
